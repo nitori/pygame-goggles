@@ -7,7 +7,7 @@ from pygame import FRect
 from pygame.typing import RectLike
 
 from .utils import convert_to_vec
-from .types import WorldPos, ScreenPos, ScreenSize, ScreenRect, is_screen_rect, is_screen_size
+from .types import WorldPos, ScreenPos, ScreenSize, ScreenRect, is_screen_rect, is_screen_size, SurfaceIterable
 
 __all__ = ['ViewMode', 'View']
 
@@ -134,12 +134,12 @@ class View:
         factor = self._get_scaling_factor(screen_rect)
         ws_x, ws_y, _, _ = self._get_region_screen_rect(screen_rect)
 
-        sx = (wx - self.region.x) * factor + ws_x
-        sy = (wy - self.region.y) * factor + ws_y
+        sx = int((wx - self.region.x) * factor + ws_x)
+        sy = int((wy - self.region.y) * factor + ws_y)
 
         return sx, sy
 
-    def render(self, surface: pygame.Surface, surface_iterable, *, debug=False):
+    def render(self, surface: pygame.Surface, surface_iterable: SurfaceIterable, *, debug: bool = False) -> None:
         screen_rect = surface.get_rect()
         factor = self._get_scaling_factor(screen_rect)
         draw_area = self._get_region_screen_rect(screen_rect)

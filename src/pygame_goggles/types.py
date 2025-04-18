@@ -1,5 +1,5 @@
-from typing import TypeGuard
-from pygame import Vector2, Rect, FRect
+from typing import TypeGuard, Iterable
+from pygame import Vector2, Rect, FRect, Surface
 
 __all__ = [
     'IntPair', 'FloatPair',
@@ -9,6 +9,7 @@ __all__ = [
     'WorldRect', 'ScreenRect',
     'is_screen_rect', 'is_screen_size',
     'is_world_rect', 'is_world_size',
+    'SurfaceIterable',
 ]
 
 type IntPair = tuple[int, int]
@@ -24,6 +25,8 @@ type ScreenSize = IntPair
 
 type WorldRect = IntPair | FloatPair | IntQuad | FloatQuad | Rect | FRect
 type ScreenRect = IntPair | IntQuad | Rect
+
+type SurfaceIterable = Iterable[tuple[WorldPos, Surface]]
 
 
 def is_screen_rect(s: ScreenRect) -> TypeGuard[IntQuad | Rect]:
