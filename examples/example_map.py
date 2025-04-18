@@ -1,6 +1,3 @@
-from typing import Generator
-import random
-
 import pygame
 
 from pygame_goggles import View, ViewMode
@@ -8,7 +5,7 @@ from common import App, get_tiles_for_bbox
 
 
 def main():
-    app = App()
+    app = App((1000, 600))
 
     view = View(
         ViewMode.RegionLetterbox,

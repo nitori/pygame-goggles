@@ -49,12 +49,12 @@ def get_tiles_for_bbox(
 
 
 class App:
-    def __init__(self):
+    def __init__(self, size: tuple[int, int] = (800, 600)):
         pygame.init()
 
         pygame.init()
 
-        self.screen = pygame.display.set_mode((1000, 600), pygame.RESIZABLE)
+        self.screen = pygame.display.set_mode(size, pygame.RESIZABLE)
         self.clock = pygame.Clock()
 
         self.rows = 50
