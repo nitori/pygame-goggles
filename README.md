@@ -5,16 +5,16 @@ Camera/Viewport library for pygame/pygame-ce
 ### 🧭 Camera/Viewport System – Feature Overview
 
 - [x] Translate between world and screen coordinates (`world_to_screen`, `screen_to_world`)
-    - Needed for input mapping (e.g. `screen_to_world(mouse_pos)`)
+    - Needed for input mapping (e.g. `screen_to_world(surface_rect, mouse_pos)`)
 - [x] Support multiple view modes:
     - [x] Fixed world area (scales with screen), with or without padding
     - [ ] ~~Fixed zoom level (screen res affects visible area)~~
-- [x] Camera movement via external control (`move_center_to(pos)`)
+- [x] Camera movement via external control (`move_to(pos)`)
 - [x] Optional clamping to world bounds / limits (camera can't move past edges)
 - [x] Multiple views supported via independent instances (multi-camera/minimap/splitscreen)
 - [x] Support lerping/smooth movement to a target position (or perhaps have the user do it themselves?)
     - [ ] Can probably get some more love, but a basic lerp already works.
-- [x] Expose `get_current_bounding_box(surface_rect)` for rendering logic
+- [x] Expose `get_bounding_box(surface_rect)` for rendering logic
     - Camera "requests" world region using the bounding box method above; game provides matching surfaces
     - [x] Accept surface size/rect for bounding box calculations (for the different view modes above)
 - [ ] Handle zooming, including fractional zoom
@@ -25,15 +25,15 @@ Camera/Viewport library for pygame/pygame-ce
 - [ ] debug helpers (draw bounding box, show mouse world pos, etc.)
 - [ ] Overscan/margin support for effects, camera shake, etc.
 
-## View Modes
+## View/Visor Modes
 
-#### 1. Fixed Region (No Overscan)
+#### 1. Fixed Region (No extended view)
 
 - A specific world size (e.g. 400x300 units) is always shown.
 - If the screen's aspect ratio differs, black bars (letterboxing) fill the space.
 - Scaling happens to fit the screen, preserving aspect ratio.
 
-#### 2. Fixed Region (With Overscan)
+#### 2. Fixed Region (With extended view)
 
 - A specific world size (e.g. 400x300) is the *minimum* shown.
 - If the screen is larger/wider, *more* of the world is revealed (i.e. expands the visible region).
@@ -45,11 +45,11 @@ Camera/Viewport library for pygame/pygame-ce
 # get a surface the view can draw on. Could also be screen directly.
 surf = pygame.Surface(400, 300)
 
-# Create a View instance
-view = View(
-    ViewMode.RegionLetterbox,  # One of two modes (see above)
+# Create a Visor instance
+visor = Visor(
+    VisorMode.RegionLetterbox,  # One of two modes (see above)
     initial_region=(0, 0, 400, 300),  # world region to "view"
-    limits=[-2000, -2000, 2000, 2000],  # Optional min/max x,y coords to constrain the view to.
+    limits=[-2000, -2000, 2000, 2000],  # Optional min/max x,y coords to constrain the visor to.
 )
 
 while True:
@@ -57,18 +57,18 @@ while True:
 
     # Get the world bounding box (it's a pygame.FRect, indicating the area of
     # the world that is currently visible)
-    bbox = view.get_bounding_box(surf.get_rect())
+    bbox = visor.get_bounding_box(surf.get_rect())
 
     # Get iterable of surfaces, that cover the bounding box
     # This you need to implement yourself!
     # Return an iterable of tuples: (world_x, world_y, tile_surface)
     # Where tile_surface (at the moment) must have world coords width/height. Surfaces are expected to be
-    # pre-rendered at world-scale (1 unit = 1 pixel in world space). The View system will scale them
-    # appropriately based on screen resolution and view mode.
+    # pre-rendered at world-scale (1 unit = 1 pixel in world space). The Visor system will scale them
+    # appropriately based on screen resolution and visor mode.
     tiles = world.get_tiles_iterable(bbox)
 
-    # render tiles to surface, the view will autoscale them to the correct size.
-    view.render(surf, tiles)
+    # render tiles to surface, the visor will autoscale them to the correct size.
+    visor.render(surf, tiles)
 
     # optional (if you don't use the screen directly), blit to screen:
     screen.blit(surf, (0, 0))
@@ -83,17 +83,17 @@ your players surface, and `player.rect` holds the players position:
 while True:
     # ...
 
-    # update view based on player position *before* getting the bbox
-    view.move_to(player.rect.center)  # view.lerp_to(...) is also possible
-    bbox = view.get_bounding_box(surf.get_rect())
+    # update visor based on player position *before* getting the bbox
+    visor.move_to(player.rect.center)  # visor.lerp_to(...) is also possible
+    bbox = visor.get_bounding_box(surf.get_rect())
 
     # ... get tiles etc.
 
     # render map
-    view.render(surf, tiles)
+    visor.render(surf, tiles)
 
-    # render the player using view.render, so it will be scaled correctly
-    view.render(surf, [
+    # render the player using visor.render, so it will be scaled correctly
+    visor.render(surf, [
         (player.rect.topleft, player.surf)
     ])
 
@@ -102,19 +102,19 @@ while True:
 
 ### 📌 Example: Map + Minimap
 
-See [`example_map.py`](examples/example_map.py) for a full working example of a main view and a minimap using two independent cameras.
+See [`example_map.py`](examples/example_map.py) for a full working example of a main visor and a minimap using two independent cameras.
 
 ![example_map.png](examples/screenshots/example_map.png)
 
 ---
 
-See [`example_modes.py`](examples/example_modes.py) to demonstrate the difference between `ViewMode.RegionLetterbox` and `ViewMode.RegionExpand`.
+See [`example_modes.py`](examples/example_modes.py) to demonstrate the difference between `VisorMode.RegionLetterbox` and `VisorMode.RegionExpand`.
 
 ![example_modes.png](examples/screenshots/example_modes.png)
 
 ---
 
-See [`example_zoom.py`](examples/example_zoom.py) to demonstrate a simple way to zoom your view in and out.
+See [`example_zoom.py`](examples/example_zoom.py) to demonstrate a simple way to zoom your visor in and out.
 
 ![example_zoom.png](examples/screenshots/example_zoom.png)
 
@@ -126,6 +126,6 @@ See [`example_mouse.py`](examples/example_mouse.py) for a demonstration of track
 
 ---
 
-See [`example_ui.py`](examples/example_ui.py) for a simple UI example, of how to position them in the "active" area, in any ViewMode.
+See [`example_ui.py`](examples/example_ui.py) for a simple UI example, of how to position them in the "active" area, in any VisorMode.
 
 ![example_ui.png](examples/screenshots/example_ui.png)
