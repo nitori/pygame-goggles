@@ -120,6 +120,7 @@ def test_screen_to_world(
     [ViewMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (200, 150), (960, 540)],
     [ViewMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (40, 30), (384, 108)],
     [ViewMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (0, 0), (240, 0)],
+    [ViewMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (400 / 1440 * 1439, 300 / 1080 * 1079), (1679, 1079)],
 ])
 def test_world_to_screen(
     mode: ViewMode,
