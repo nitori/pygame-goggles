@@ -52,8 +52,6 @@ class App:
     def __init__(self, size: tuple[int, int] = (800, 600)):
         pygame.init()
 
-        pygame.init()
-
         self.screen = pygame.display.set_mode(size, pygame.RESIZABLE)
         self.clock = pygame.Clock()
 
