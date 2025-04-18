@@ -77,24 +77,24 @@ def test_region_screen_rect(initial_region: RectLike, screen_rect: RectLike, exp
 
 
 @pytest.mark.parametrize("mode,initial_region,screen_rect,screen_pos,expected_world_pos", [
-    [ViewMode.RegionLetterbox, (0, 0, 400, 300), (0, 0, 400, 300), (200, 150), (200, 150)],
-    [ViewMode.RegionLetterbox, (0, 0, 400, 300), (0, 0, 1920, 1080), (960, 540), (200, 150)],
-    [ViewMode.RegionLetterbox, (0, 0, 400, 300), (0, 0, 1920, 1080), (384, 108), (40, 30)],
-    [ViewMode.RegionLetterbox, (0, 0, 400, 300), (0, 0, 1920, 1080), (240, 0), (0, 0)],
+    [ViewMode.RegionLetterbox, (0, 0, 400, 300), (400, 300), (200, 150), (200, 150)],
+    [ViewMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (960, 540), (200, 150)],
+    [ViewMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (384, 108), (40, 30)],
+    [ViewMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (240, 0), (0, 0)],
 
-    [ViewMode.RegionLetterbox, (0, 0, 400, 300), (0, 0, 1920, 1080), (1679, 1079),
+    [ViewMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (1679, 1079),
      (400 / 1440 * 1439, 300 / 1080 * 1079)],
 
-    [ViewMode.RegionLetterbox, (0, 0, 400, 300), (0, 0, 1920, 1080), (1680, 1080), None],  # the ends are *exclusive*
-    [ViewMode.RegionExpand, (0, 0, 400, 300), (0, 0, 1920, 1080), (1680, 1080), (400, 300)],
+    [ViewMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (1680, 1080), None],  # the ends are *exclusive*
+    [ViewMode.RegionExpand, (0, 0, 400, 300), (1920, 1080), (1680, 1080), (400, 300)],
 
     # offset: (240, 0)
-    [ViewMode.RegionLetterbox, (0, 0, 400, 300), (0, 0, 1920, 1080), (60, 0), None],
-    [ViewMode.RegionExpand, (0, 0, 400, 300), (0, 0, 1920, 1080), (60, 0), (-50, 0)],
+    [ViewMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (60, 0), None],
+    [ViewMode.RegionExpand, (0, 0, 400, 300), (1920, 1080), (60, 0), (-50, 0)],
 
     # offset: (0, 555)
-    [ViewMode.RegionLetterbox, (0, 0, 400, 300), (0, 0, 1080, 1920), (0, 420), None],
-    [ViewMode.RegionExpand, (0, 0, 400, 300), (0, 0, 1080, 1920), (0, 420), (0, -50)],
+    [ViewMode.RegionLetterbox, (0, 0, 400, 300), (1080, 1920), (0, 420), None],
+    [ViewMode.RegionExpand, (0, 0, 400, 300), (1080, 1920), (0, 420), (0, -50)],
 ])
 def test_screen_to_world(
     mode: ViewMode,
