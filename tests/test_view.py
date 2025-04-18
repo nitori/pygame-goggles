@@ -82,6 +82,8 @@ def test_region_screen_rect(initial_region: RectLike, screen_rect: RectLike, exp
     [ViewMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (384, 108), (40, 30)],
     [ViewMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (240, 0), (0, 0)],
 
+    [ViewMode.RegionLetterbox, (100, 100, 400, 300), (400, 300), (200, 150), (300, 250)],
+
     [ViewMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (1679, 1079),
      (400 / 1440 * 1439, 300 / 1080 * 1079)],
 
@@ -114,6 +116,7 @@ def test_screen_to_world(
 
 @pytest.mark.parametrize("mode,initial_region,screen_rect,world_pos,expected_screen_pos", [
     [ViewMode.RegionLetterbox, (0, 0, 400, 300), (400, 300), (200, 150), (200, 150)],
+    [ViewMode.RegionLetterbox, (100, 100, 400, 300), (400, 300), (300, 250), (200, 150)],
     [ViewMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (200, 150), (960, 540)],
     [ViewMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (40, 30), (384, 108)],
     [ViewMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (0, 0), (240, 0)],

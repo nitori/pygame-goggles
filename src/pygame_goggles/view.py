@@ -112,8 +112,8 @@ class View:
         factor = self._get_scaling_factor(screen_rect)
         ws_x, ws_y, _, _ = self._get_region_screen_rect(screen_rect)
 
-        wx = (sx - ws_x) / factor
-        wy = (sy - ws_y) / factor
+        wx = (sx - ws_x) / factor + self.region.x
+        wy = (sy - ws_y) / factor + self.region.y
 
         if self.mode == ViewMode.RegionLetterbox:
             if self.region.x <= wx < self.region.width \
@@ -134,7 +134,7 @@ class View:
         factor = self._get_scaling_factor(screen_rect)
         ws_x, ws_y, _, _ = self._get_region_screen_rect(screen_rect)
 
-        sx = wx * factor + ws_x
-        sy = wy * factor + ws_y
+        sx = (wx - self.region.x) * factor + ws_x
+        sy = (wy - self.region.y) * factor + ws_y
 
         return sx, sy
