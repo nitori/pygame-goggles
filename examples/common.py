@@ -87,8 +87,6 @@ class App:
         right_column = int(bb_x2 - off_x) // self.tile_size
         bottom_row = int(bb_y2 - off_y) // self.tile_size
 
-        print(f'requesting {(bottom_row - top_row + 1) * (right_column - left_column + 1)} tiles')
-
         for row in range(top_row, bottom_row + 1):
             for column in range(left_column, right_column + 1):
                 if data := tiles.get((column, row)):
