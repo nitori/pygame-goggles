@@ -10,6 +10,7 @@ __all__ = [
     'is_screen_rect', 'is_screen_size',
     'is_world_rect', 'is_world_size',
     'SurfaceIterable',
+    'Limits',
 ]
 
 type IntPair = tuple[int, int]
@@ -27,6 +28,8 @@ type WorldRect = IntPair | FloatPair | IntQuad | FloatQuad | Rect | FRect
 type ScreenRect = IntPair | IntQuad | Rect
 
 type SurfaceIterable = Iterable[tuple[WorldPos, Surface]]
+
+type Limits = IntQuad | FloatQuad
 
 
 def is_screen_rect(s: ScreenRect) -> TypeGuard[IntQuad | Rect]:

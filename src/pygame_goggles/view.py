@@ -1,4 +1,3 @@
-from typing import TypeGuard, reveal_type
 from enum import Enum, auto
 import math
 
@@ -7,7 +6,7 @@ from pygame import FRect
 from pygame.typing import RectLike
 
 from .utils import convert_to_vec
-from .types import WorldPos, ScreenPos, ScreenSize, ScreenRect, is_screen_rect, is_screen_size, SurfaceIterable
+from .types import WorldPos, ScreenPos, ScreenSize, ScreenRect, is_screen_rect, is_screen_size, Limits, SurfaceIterable
 
 __all__ = ['ViewMode', 'View']
 
@@ -20,14 +19,30 @@ class ViewMode(Enum):
 class View:
     mode: ViewMode
     region: FRect
+    limits: Limits | None
 
-    def __init__(self, mode: ViewMode, *, initial_region: RectLike) -> None:
+    def __init__(self, mode: ViewMode, *, initial_region: RectLike, limits: Limits | None = None) -> None:
         self.mode = mode
         self.region = FRect(initial_region)
+        self.limits = limits
 
     def move_to(self, pos: WorldPos) -> None:
         pos = convert_to_vec(pos)
         self.region.center = pos.x, pos.y
+        if self.limits is None:
+            return
+
+        lx1, ly1, lx2, ly2 = self.limits
+
+        x1, y1 = self.region.topleft
+        x1 = max(x1, lx1)
+        y1 = max(y1, ly1)
+        self.region.topleft = x1, y1
+
+        x2, y2 = self.region.bottomright
+        x2 = min(x2, lx2)
+        y2 = min(y2, ly2)
+        self.region.bottomright = x2, y2
 
     @staticmethod
     def _screen_size(screen_rect: ScreenRect) -> ScreenSize:

@@ -53,12 +53,31 @@ def get_tiles_for_bbox(
 def main():
     pygame.init()
 
-    tiles = generate_world_tiles((256, 256), (-16000, -16000), 128)
+    rows = 30
+    columns = 30
+    tile_size = 32
+
+    offset = (
+        - (rows * tile_size) / 2,
+        - (columns * tile_size) / 2,
+    )
+
+    tiles = generate_world_tiles((rows, columns), offset, tile_size)
+
+    limit_x1 = offset[0] - 10
+    limit_y1 = offset[1] - 10
+
+    limit_x2 = limit_x1 + columns * tile_size + 20
+    limit_y2 = limit_y1 + rows * tile_size + 20
 
     screen = pygame.display.set_mode((1000, 600), pygame.RESIZABLE)
     clock = pygame.Clock()
 
-    view = View(ViewMode.RegionLetterbox, initial_region=(0, 0, 400, 300))
+    view = View(
+        ViewMode.RegionLetterbox,
+        initial_region=(0, 0, 400, 300),
+        limits=(limit_x1, limit_y1, limit_x2, limit_y2),
+    )
 
     speed = 200
 
