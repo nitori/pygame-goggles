@@ -39,33 +39,61 @@ Camera/Viewport library for pygame/pygame-ce
 - If the screen is larger/wider, *more* of the world is revealed (i.e. expands the visible region).
 - No letterboxing; fills the screen with as much world as possible.
 
-
 ## Basic Usage
 
-```py
+```python
 # get a surface the view can draw on. Could also be screen directly.
 surf = pygame.Surface(400, 300)
 
 # Create a View instance
 view = View(
-  ViewMode.RegionLetterbox,  # One of two modes (see above)
-  initial_region=(0, 0, 400, 300),  # world region to "view"
-  limits=[-2000, -2000, 2000, 2000],  # Optional min/max x,y coords to constrain the view to.
+    ViewMode.RegionLetterbox,  # One of two modes (see above)
+    initial_region=(0, 0, 400, 300),  # world region to "view"
+    limits=[-2000, -2000, 2000, 2000],  # Optional min/max x,y coords to constrain the view to.
 )
 
-# Get the world bounding box (it's a pygame.FRect, indicating the area of
-# the world that is currently visible)
-bbox = view.get_bounding_box(surf.get_rect())
+while True:
+    # ...
 
-# Get iterable of surfaces, that cover the bounding box
-# This you need to implement yourself!
-# Return an iterable of tuples: (world_x, world_y, tile_surface)
-# ... where tile_surface (at the moment) must have world coords width/height. They must not be scaled.
-tiles = world.get_tiles_iterable(bbox)
+    # Get the world bounding box (it's a pygame.FRect, indicating the area of
+    # the world that is currently visible)
+    bbox = view.get_bounding_box(surf.get_rect())
 
-# render tiles to surface, the view will autoscale them to the correct size.
-view.render(surf, tiles)
+    # Get iterable of surfaces, that cover the bounding box
+    # This you need to implement yourself!
+    # Return an iterable of tuples: (world_x, world_y, tile_surface)
+    # ... where tile_surface (at the moment) must have world coords width/height. They must not be scaled.
+    tiles = world.get_tiles_iterable(bbox)
 
-# optional (if you don't use the screen directly), blit to screen:
-screen.blit(surf, (0, 0))
+    # render tiles to surface, the view will autoscale them to the correct size.
+    view.render(surf, tiles)
+
+    # optional (if you don't use the screen directly), blit to screen:
+    screen.blit(surf, (0, 0))
+
+    # ...
+```
+
+If you have a player, that needs to be rendered on top of the map. Assuming `player.surf` holds
+your players surface, and `player.rect` holds the players position:
+
+```python
+while True:
+    # ...
+
+    # update view based on player position *before* getting the bbox
+    view.move_to(player.rect.center)  # view.lerp_to(...) is also possible
+    bbox = view.get_bounding_box(surf.get_rect())
+
+    # ... get tiles etc.
+
+    # render map
+    view.render(surf, tiles)
+
+    # render the player using view.render, so it will be scaled correctly
+    view.render(surf, [
+        (player.rect.topleft, player.surf)
+    ])
+
+    # ...
 ```
