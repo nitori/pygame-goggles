@@ -105,3 +105,5 @@ while True:
 See [`example_map.py`](examples/example_map.py) for a full working example of a main view and a minimap using two independent cameras.
 
 See [`example_modes.py`](examples/example_modes.py) to demonstrate the difference between `ViewMode.RegionLetterbox` and `ViewMode.RegionExpand`.
+
+See [`example_zoom.py`](examples/example_zoom.py) to demonstrate a simple way to zoom your view in and out.
