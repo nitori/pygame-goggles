@@ -109,3 +109,5 @@ See [`example_modes.py`](examples/example_modes.py) to demonstrate the differenc
 See [`example_zoom.py`](examples/example_zoom.py) to demonstrate a simple way to zoom your view in and out.
 
 See [`example_mouse.py`](examples/example_mouse.py) for a demonstration of tracking mouse screen pos to world tile position.
+
+See [`example_ui.py`](examples/example_ui.py) for a simple UI example, of how to position them in the "active" area, in any ViewMode.
