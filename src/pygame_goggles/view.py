@@ -110,7 +110,7 @@ class View:
 
         sx, sy = screen_pos
         factor = self._get_scaling_factor(screen_rect)
-        ws_x, ws_y, ws_w, ws_h = self._get_region_screen_rect(screen_rect)
+        ws_x, ws_y, _, _ = self._get_region_screen_rect(screen_rect)
 
         wx = (sx - ws_x) / factor
         wy = (sy - ws_y) / factor
@@ -122,3 +122,19 @@ class View:
             return None
 
         return pygame.Vector2(wx, wy)
+
+    def world_to_screen(self, screen_rect: ScreenRect, world_pos: WorldPos) -> ScreenPos:
+        # ViewMode.RegionLetterbox
+        # region = (0, 0, 400, 300)
+        # screen_rect = (0, 0, 1920, 1080)   -- region scaled to: (1440, 1080)
+        # world_pos = (40, 30)               -- (10% of 400; 10% of 300)
+        # expected screen_pos = (384, 108)   -- 240 + 144  (240 padding + 10% of 1440; 10% of 1080)
+
+        wx, wy = world_pos
+        factor = self._get_scaling_factor(screen_rect)
+        ws_x, ws_y, _, _ = self._get_region_screen_rect(screen_rect)
+
+        sx = wx * factor + ws_x
+        sy = wy * factor + ws_y
+
+        return sx, sy

@@ -110,3 +110,23 @@ def test_screen_to_world(
     else:
         for a, b in zip(world_pos, expected_world_pos):
             assert math.isclose(a, b), f"Failed for {mode} width: {tuple(world_pos)} == {expected_world_pos}"
+
+
+@pytest.mark.parametrize("mode,initial_region,screen_rect,world_pos,expected_screen_pos", [
+    [ViewMode.RegionLetterbox, (0, 0, 400, 300), (400, 300), (200, 150), (200, 150)],
+    [ViewMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (200, 150), (960, 540)],
+    [ViewMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (40, 30), (384, 108)],
+    [ViewMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (0, 0), (240, 0)],
+])
+def test_world_to_screen(
+    mode: ViewMode,
+    initial_region: RectLike,
+    screen_rect: RectLike,
+    world_pos: WorldPos,
+    expected_screen_pos: ScreenPos
+):
+    view = View(mode, initial_region=initial_region)
+    screen_pos = view.world_to_screen(screen_rect, world_pos)
+
+    for a, b in zip(screen_pos, expected_screen_pos):
+        assert math.isclose(a, b), f"Failed for {mode} width: {tuple(screen_pos)} == {expected_screen_pos}"
