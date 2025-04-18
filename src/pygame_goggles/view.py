@@ -26,7 +26,7 @@ class View:
         self.region = FRect(initial_region)
         self.limits = limits
 
-    def lerp_to(self, pos: WorldPos, weight: float = 1.0):
+    def lerp_to(self, pos: WorldPos, weight: float = 1.0) -> None:
         px, py = pos
         cx, cy = self.region.center
         x = pygame.math.lerp(cx, px, weight)
