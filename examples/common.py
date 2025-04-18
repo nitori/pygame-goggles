@@ -1,6 +1,16 @@
+"""
+common.py – Shared helper code for pygame-visor examples.
+
+This module provides a minimal application framework and utility functions
+used across multiple examples. It handles basic Pygame setup, player movement,
+world tile generation, and tile fetching based on a visible region.
+
+Not intended for production use—just a simple, reusable base to keep example
+code focused on demonstrating viewport/camera functionality.
+"""
+
 from typing import Generator
 import random
-import math
 
 import pygame
 
