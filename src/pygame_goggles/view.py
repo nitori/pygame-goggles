@@ -26,6 +26,13 @@ class View:
         self.region = FRect(initial_region)
         self.limits = limits
 
+    def lerp_to(self, pos: WorldPos, weight: float = 1.0):
+        px, py = pos
+        cx, cy = self.region.center
+        x = pygame.math.lerp(cx, px, weight)
+        y = pygame.math.lerp(cy, py, weight)
+        self.move_to((x, y))
+
     def move_to(self, pos: WorldPos) -> None:
         pos = convert_to_vec(pos)
         self.region.center = pos.x, pos.y

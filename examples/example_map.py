@@ -53,8 +53,8 @@ def get_tiles_for_bbox(
 def main():
     pygame.init()
 
-    rows = 30
-    columns = 30
+    rows = 50
+    columns = 50
     tile_size = 32
 
     offset = (
@@ -64,11 +64,11 @@ def main():
 
     tiles = generate_world_tiles((rows, columns), offset, tile_size)
 
-    limit_x1 = offset[0] - 10
-    limit_y1 = offset[1] - 10
+    limit_x1 = offset[0]
+    limit_y1 = offset[1]
 
-    limit_x2 = limit_x1 + columns * tile_size + 20
-    limit_y2 = limit_y1 + rows * tile_size + 20
+    limit_x2 = limit_x1 + columns * tile_size
+    limit_y2 = limit_y1 + rows * tile_size
 
     screen = pygame.display.set_mode((1000, 600), pygame.RESIZABLE)
     clock = pygame.Clock()
@@ -76,12 +76,13 @@ def main():
     view = View(
         ViewMode.RegionLetterbox,
         initial_region=(0, 0, 400, 300),
-        limits=(limit_x1, limit_y1, limit_x2, limit_y2),
+        limits=(limit_x1 - 10, limit_y1 - 10, limit_x2 + 20, limit_y2 + 20),
     )
 
     map_view = View(
         ViewMode.RegionLetterbox,
         initial_region=(0, 0, 1000, 750),
+        limits=(limit_x1, limit_y1, limit_x2, limit_y2),
     )
     map_surface = pygame.Surface((200, 150))
 
@@ -116,7 +117,7 @@ def main():
 
         screen.fill('black')
 
-        view.move_to(player_pos.center)
+        view.lerp_to(player_pos.center, 0.1)
         map_view.move_to(player_pos.center)
 
         bbox = view.get_bounding_box(screen.get_rect())
