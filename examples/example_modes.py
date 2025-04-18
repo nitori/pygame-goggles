@@ -28,7 +28,14 @@ def main():
     text1 = font.render(f"{view1.mode}", True, 'black', 'white')
     text2 = font.render(f"{view2.mode}", True, 'black', 'white')
 
-    for delta in app.loop():
+    def event_handler(event):
+        # eh
+        nonlocal surf1, surf2
+        if event.type == pygame.VIDEORESIZE:
+            surf1 = pygame.Surface((app.screen.width, app.screen.height // 2))
+            surf2 = pygame.Surface((app.screen.width, app.screen.height // 2))
+
+    for delta in app.loop(event_handler):
         view1.lerp_to(app.player_pos.center, 0.1)
         view2.lerp_to(app.player_pos.center, 0.1)
 

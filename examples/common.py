@@ -92,12 +92,14 @@ class App:
             self.limits[3] + value,
         ]
 
-    def loop(self):
+    def loop(self, callback=None):
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     return
+                if callback:
+                    callback(event)
 
             delta = self.clock.tick(60) / 1000
 
