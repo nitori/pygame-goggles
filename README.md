@@ -4,20 +4,21 @@ Camera/Viewport library for pygame/pygame-ce
 
 ### 🧭 Camera/Viewport System – Feature Overview
 
-- [ ] Translate between world and screen coordinates (`world_to_screen`, `screen_to_world`)
+- [x] Translate between world and screen coordinates (`world_to_screen`, `screen_to_world`)
     - Needed for input mapping (e.g. `screen_to_world(mouse_pos)`)
-- [ ] Support multiple view modes:
-    - [ ] Fixed world area (scales with screen), with or without padding
-    - [ ] Fixed zoom level (screen res affects visible area)
-- [ ] Camera movement via external control (`move_center_to(pos)`)
-- [ ] Optional clamping to world bounds / limits (camera can't move past edges)
-- [ ] Support lerping/smooth movement to a target position (or perhaps have the user do it themselves?)
+- [x] Support multiple view modes:
+    - [x] Fixed world area (scales with screen), with or without padding
+    - [ ] ~~Fixed zoom level (screen res affects visible area)~~
+- [x] Camera movement via external control (`move_center_to(pos)`)
+- [x] Optional clamping to world bounds / limits (camera can't move past edges)
+- [x] Multiple views supported via independent instances (multi-camera/minimap/splitscreen)
+- [x] Support lerping/smooth movement to a target position (or perhaps have the user do it themselves?)
+    - [ ] Can probably get some more love, but a basic lerp already works.
+- [x] Expose `get_current_bounding_box(surface_rect)` for rendering logic
+    - Camera "requests" world region using the bounding box method above; game provides matching surfaces
+    - [x] Accept surface size/rect for bounding box calculations (for the different view modes above)
 - [ ] Handle zooming, including fractional zoom
     - [ ] UX: Optional **zoom-to-cursor** behavior (maintains world point under cursor)
-- [ ] Expose `get_current_bounding_box(surface_rect)` for rendering logic
-    - Camera "requests" world region using the bounding box method above; game provides matching surfaces
-    - [ ] Accept surface size/rect for bounding box calculations (for the different view modes above)
-- [ ] Multiple views supported via independent instances (multi-camera/minimap/splitscreen)
 
 ### Optional stuff for now
 
