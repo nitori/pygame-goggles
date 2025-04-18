@@ -1,6 +1,8 @@
-# Pygame Googles
+# Pygame Visor
 
-Camera/Viewport library for pygame/pygame-ce
+Camera/Viewport library.
+
+Currently only works with `pygame-ce`, as it's using `pygame.FRect` in some parts.
 
 ### 🧭 Camera/Viewport System – Feature Overview
 
