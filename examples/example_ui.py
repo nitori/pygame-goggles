@@ -1,14 +1,14 @@
 import pygame
 
-from pygame_goggles import View, ViewMode
+from pygame_visor import Visor, VisorMode
 from common import App
 
 
 def main():
     app = App((1000, 600))
 
-    view = View(
-        ViewMode.RegionExpand,
+    view = Visor(
+        VisorMode.RegionExpand,
         initial_region=(0, 0, 400, 300),
         limits=app.extended_limits(10),
     )

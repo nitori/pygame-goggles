@@ -4,7 +4,7 @@ import math
 
 import pygame
 
-from pygame_goggles.types import WorldPos
+from pygame_visor.types import WorldPos
 
 SEED = 123
 

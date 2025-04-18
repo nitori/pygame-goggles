@@ -7,20 +7,20 @@ from pygame.typing import RectLike
 
 from .types import WorldPos, ScreenPos, ScreenSize, ScreenRect, is_screen_rect, is_screen_size, Limits, SurfaceIterable
 
-__all__ = ['ViewMode', 'View']
+__all__ = ['VisorMode', 'Visor']
 
 
-class ViewMode(Enum):
+class VisorMode(Enum):
     RegionLetterbox = auto()
     RegionExpand = auto()
 
 
-class View:
-    mode: ViewMode
+class Visor:
+    mode: VisorMode
     region: FRect
     limits: Limits | None
 
-    def __init__(self, mode: ViewMode, *, initial_region: RectLike, limits: Limits | None = None) -> None:
+    def __init__(self, mode: VisorMode, *, initial_region: RectLike, limits: Limits | None = None) -> None:
         self.mode = mode
         self.region = FRect(initial_region)
         self.limits = limits
@@ -68,7 +68,7 @@ class View:
         """
         sw, sh = self._screen_size(screen_rect)
 
-        if self.mode == ViewMode.RegionLetterbox:
+        if self.mode == VisorMode.RegionLetterbox:
             # the region to render is exactly the current region stored
             return FRect(self.region)
 
@@ -143,7 +143,7 @@ class View:
         wx = (sx - ws_x) / factor + self.region.x
         wy = (sy - ws_y) / factor + self.region.y
 
-        if self.mode == ViewMode.RegionLetterbox:
+        if self.mode == VisorMode.RegionLetterbox:
             if self.region.x <= wx < self.region.width \
                 and self.region.y <= wy < self.region.height:
                 return pygame.Vector2(wx, wy)
@@ -171,7 +171,7 @@ class View:
         screen_rect = surface.get_rect()
         factor = self.get_scaling_factor(screen_rect)
         draw_area = self.get_region_screen_rect(screen_rect)
-        if self.mode == ViewMode.RegionLetterbox:
+        if self.mode == VisorMode.RegionLetterbox:
             subsurface = surface.subsurface(draw_area)
         else:
             subsurface = surface
@@ -182,7 +182,7 @@ class View:
                 h = math.ceil(surf.get_height() * factor)
                 surf = pygame.transform.scale(surf, (w, h))
             sx, sy = self.world_to_screen(screen_rect, world_xy)
-            if self.mode == ViewMode.RegionLetterbox:
+            if self.mode == VisorMode.RegionLetterbox:
                 sx -= draw_area.x
                 sy -= draw_area.y
             subsurface.blit(surf, (sx, sy))

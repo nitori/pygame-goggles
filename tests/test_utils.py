@@ -3,7 +3,7 @@ from typing import Type
 import pytest
 import pygame
 
-from pygame_goggles.utils import convert_to_vec
+from pygame_visor.utils import convert_to_vec
 
 
 @pytest.mark.parametrize("tpl,expected_xy", [
