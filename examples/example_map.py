@@ -23,7 +23,7 @@ def main():
     view.move_to(app.player_pos.center)
     map_view.move_to(app.player_pos.center)
 
-    for delta in app.loop():
+    for delta in app.loop(60):
         view.lerp_to(app.player_pos.center, 0.1)
         map_view.move_to(app.player_pos.center)
 

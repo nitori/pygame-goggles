@@ -90,8 +90,14 @@ class App:
             self.limits[3] + value,
         ]
 
-    def loop(self, callback=None):
+    def loop(self, fps: int, callback=None):
+        frames = 0
+        acc_deltas = 0
+        font = pygame.Font(pygame.font.get_default_font())
+        fps_surf = font.render(f'FPS: {frames}', True, 'white', 'black')
+
         while True:
+            frames += 1
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -99,7 +105,7 @@ class App:
                 if callback:
                     callback(event)
 
-            delta = self.clock.tick(60) / 1000
+            delta = self.clock.tick(fps) / 1000
 
             keys = pygame.key.get_pressed()
             direction = pygame.Vector2(
@@ -114,5 +120,13 @@ class App:
             self.screen.fill('black')
 
             yield delta
+
+            acc_deltas += delta
+            if acc_deltas > 1.0:
+                acc_deltas -= 1.0
+                fps_surf = font.render(f'FPS: {frames}', True, 'white', 'black')
+                frames = 0
+
+            self.screen.blit(fps_surf, (10, 50))
 
             pygame.display.flip()

@@ -35,7 +35,7 @@ def main():
             surf1 = pygame.Surface((app.screen.width, app.screen.height // 2))
             surf2 = pygame.Surface((app.screen.width, app.screen.height // 2))
 
-    for delta in app.loop(event_handler):
+    for delta in app.loop(60, event_handler):
         view1.lerp_to(app.player_pos.center, 0.1)
         view2.lerp_to(app.player_pos.center, 0.1)
 
