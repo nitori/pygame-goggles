@@ -33,13 +33,13 @@ MIT © 2025 [Sani (https://github.com/nitori)](https://github.com/nitori)
 
 ## View/Visor Modes
 
-#### 1. Fixed Region (No extended view)
+#### 1. Fixed Region (letterbox)
 
 - A specific world size (e.g. 400x300 units) is always shown.
 - If the screen's aspect ratio differs, black bars (letterboxing) fill the space.
 - Scaling happens to fit the screen, preserving aspect ratio.
 
-#### 2. Fixed Region (With extended view)
+#### 2. Fixed Region (extended view)
 
 - A specific world size (e.g. 400x300) is the *minimum* shown.
 - If the screen is larger/wider, *more* of the world is revealed (i.e. expands the visible region).
