@@ -15,6 +15,8 @@ def main():
 
     view.move_to(app.player_pos.center)
 
+    font = pygame.Font(pygame.font.get_default_font())
+
     def event_handler(event: pygame.Event):
         if event.type == pygame.KEYDOWN:
             if event.key in (pygame.K_PLUS, pygame.K_KP_PLUS):
@@ -29,6 +31,9 @@ def main():
         view.render(app.screen, [
             (app.player_pos.topleft, app.player_surf)
         ])
+
+        size_text = font.render(str(view.region.size), True, 'white', 'black')
+        app.screen.blit(size_text, (10, 10))
 
 
 if __name__ == '__main__':
