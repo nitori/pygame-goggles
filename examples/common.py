@@ -1,62 +1,26 @@
 from typing import Generator
 import random
+import math
 
 import pygame
 
 SEED = 123
 
-
-def generate_world_tiles(
-    size: tuple[int, int],
-    world_offset: tuple[int | float, int | float],
-    tile_size: int
-):
-    """
-    size in number of (rows, columns)
-    offset in (x,y) world coordinates.
-    tile_size integer of size in world coordinates.
-
-    returns list of tile-tuples: (world_x, world_y, tile_surf)
-    """
-
-    random.seed(SEED)
-
-    rows, columns = size
-    off_x, off_y = world_offset
-
-    tiles = []
-    for row in range(rows):
-        for column in range(columns):
-            tone = random.randint(64, 240)
-            tile = pygame.Surface((tile_size, tile_size))
-            tile.fill((tone, 255, tone))
-            tiles.append((off_x + row * tile_size, off_y + column * tile_size, tile))
-    return tiles
-
-
-def get_tiles_for_bbox(
-    tiles: list[tuple[float, float, pygame.Surface]],
-    bbox: pygame.FRect
-) -> Generator[tuple[tuple[float, float], pygame.Surface]]:
-    """
-    Just look through all tiles, and look for the once we need.
-    Terrible performance, but it should work for this example.
-    """
-
-    for x, y, surf in tiles:
-        if surf.get_rect(topleft=(x, y)).colliderect(bbox):
-            yield (x, y), surf
+type TileTuple = tuple[float, float, pygame.Surface]
+type Tiles = dict[tuple[int, int], TileTuple]
 
 
 class App:
+    tiles: Tiles
+
     def __init__(self, size: tuple[int, int] = (800, 600)):
         pygame.init()
 
         self.screen = pygame.display.set_mode(size, pygame.RESIZABLE)
         self.clock = pygame.Clock()
 
-        self.rows = 50
-        self.columns = 50
+        self.rows = 150
+        self.columns = 150
         self.tile_size = 32
 
         self.offset = (
@@ -64,7 +28,7 @@ class App:
             - (self.columns * self.tile_size) / 2,
         )
 
-        self.tiles = generate_world_tiles((self.rows, self.columns), self.offset, self.tile_size)
+        self.tiles = self.generate_world_tiles()
 
         self.limits = [
             self.offset[0],
@@ -80,7 +44,61 @@ class App:
         self.player_surf.fill('red')
 
         # world pos
-        self.player_pos = self.player_surf.get_rect(center=(200, 150))
+        self.player_pos = self.player_surf.get_rect(center=(0, 0))
+
+    def generate_world_tiles(self) -> Tiles:
+        """
+        size in number of (rows, columns)
+        offset in (x,y) world coordinates.
+        tile_size integer of size in world coordinates.
+
+        returns list of tile-tuples: (world_x, world_y, tile_surf)
+        """
+
+        random.seed(SEED)
+
+        off_x, off_y = self.offset
+
+        tiles = {}
+        for row in range(self.rows):
+            for column in range(self.columns):
+                tone = random.randint(64, 240)
+                tile = pygame.Surface((self.tile_size, self.tile_size))
+                tile.fill((tone, 255, tone))
+                tiles[(column, row)] = (off_x + column * self.tile_size, off_y + row * self.tile_size, tile)
+        return tiles
+
+    def get_tiles_for_bbox(
+        self,
+        tiles: Tiles,
+        bbox: pygame.FRect
+    ) -> Generator[tuple[tuple[float, float], pygame.Surface]]:
+        """
+        Just look through all tiles, and look for the once we need.
+        Terrible performance, but it should work for this example.
+        """
+
+        off_x, off_y = self.offset
+
+        # find top left most tile
+        bb_x1, bb_y1 = map(int, bbox.topleft)
+
+        left_column = int(bb_x1 - off_x) // self.tile_size
+        top_row = int(bb_y1 - off_y) // self.tile_size
+
+        # find the bottom right most tile
+        bb_x2, bb_y2 = map(math.ceil, bbox.bottomright)
+
+        right_column = int(bb_x2 - off_x) // self.tile_size
+        bottom_row = int(bb_y2 - off_y) // self.tile_size
+
+        print(f'requesting {(bottom_row - top_row + 1) * (right_column - left_column + 1)} tiles')
+
+        for row in range(top_row, bottom_row + 1):
+            for column in range(left_column, right_column + 1):
+                if data := tiles.get((column, row)):
+                    x, y, surf = data
+                    yield (x, y), surf
 
     def extended_limits(self, value):
         return [

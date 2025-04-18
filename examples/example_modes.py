@@ -1,7 +1,7 @@
 import pygame
 
 from pygame_goggles import View, ViewMode
-from common import App, get_tiles_for_bbox
+from common import App
 
 
 def main():
@@ -41,14 +41,14 @@ def main():
 
         surf1.fill('black')
         bbox = view1.get_bounding_box(surf1.get_rect())
-        view1.render(surf1, get_tiles_for_bbox(app.tiles, bbox))
+        view1.render(surf1, app.get_tiles_for_bbox(app.tiles, bbox))
         view1.render(surf1, [
             (app.player_pos.topleft, app.player_surf)
         ])
 
         surf2.fill('black')
         bbox = view2.get_bounding_box(surf2.get_rect())
-        view2.render(surf2, get_tiles_for_bbox(app.tiles, bbox))
+        view2.render(surf2, app.get_tiles_for_bbox(app.tiles, bbox))
         view2.render(surf2, [
             (app.player_pos.topleft, app.player_surf)
         ])

@@ -1,7 +1,7 @@
 import pygame
 
 from pygame_goggles import View, ViewMode
-from common import App, get_tiles_for_bbox
+from common import App
 
 
 def main():
@@ -28,14 +28,14 @@ def main():
         map_view.move_to(app.player_pos.center)
 
         bbox = view.get_bounding_box(app.screen.get_rect())
-        view.render(app.screen, get_tiles_for_bbox(app.tiles, bbox))
+        view.render(app.screen, app.get_tiles_for_bbox(app.tiles, bbox))
         view.render(app.screen, [
             (app.player_pos.topleft, app.player_surf)
         ])
 
         bbox = map_view.get_bounding_box(map_surface.get_rect())
         map_surface.fill('black')
-        map_view.render(map_surface, get_tiles_for_bbox(app.tiles, bbox))
+        map_view.render(map_surface, app.get_tiles_for_bbox(app.tiles, bbox))
         map_view.render(map_surface, [
             (app.player_pos.topleft, app.player_surf)
         ])
