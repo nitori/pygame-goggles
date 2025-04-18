@@ -165,7 +165,10 @@ class View:
         screen_rect = surface.get_rect()
         factor = self._get_scaling_factor(screen_rect)
         draw_area = self._get_region_screen_rect(screen_rect)
-        subsurface = surface.subsurface(draw_area)
+        if self.mode == ViewMode.RegionLetterbox:
+            subsurface = surface.subsurface(draw_area)
+        else:
+            subsurface = surface
 
         for world_xy, surf in surface_iterable:
             if not math.isclose(factor, 1.0):
@@ -173,6 +176,7 @@ class View:
                 h = math.ceil(surf.get_height() * factor)
                 surf = pygame.transform.scale(surf, (w, h))
             sx, sy = self.world_to_screen(screen_rect, world_xy)
-            sx -= draw_area.x
-            sy -= draw_area.y
+            if self.mode == ViewMode.RegionLetterbox:
+                sx -= draw_area.x
+                sy -= draw_area.y
             subsurface.blit(surf, (sx, sy))
