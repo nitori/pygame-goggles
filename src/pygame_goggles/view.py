@@ -5,7 +5,6 @@ import pygame
 from pygame import FRect
 from pygame.typing import RectLike
 
-from .utils import convert_to_vec
 from .types import WorldPos, ScreenPos, ScreenSize, ScreenRect, is_screen_rect, is_screen_size, Limits, SurfaceIterable
 
 __all__ = ['ViewMode', 'View']
@@ -34,8 +33,7 @@ class View:
         self.move_to((x, y))
 
     def move_to(self, pos: WorldPos) -> None:
-        pos = convert_to_vec(pos)
-        self.region.center = pos.x, pos.y
+        self.region.center = pos[0], pos[1]
         if self.limits is None:
             return
 
