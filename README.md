@@ -4,7 +4,11 @@ Camera/Viewport library.
 
 Currently only works with `pygame-ce`, as it's using `pygame.FRect` in some parts.
 
-### 🧭 Camera/Viewport System – Feature Overview
+## License
+
+MIT © 2025 [Sani (https://github.com/nitori)](https://github.com/nitori)
+
+## Camera/Viewport System – Feature Overview
 
 - [x] Translate between world and screen coordinates (`world_to_screen`, `screen_to_world`)
     - Needed for input mapping (e.g. `screen_to_world(surface_rect, mouse_pos)`)
@@ -102,7 +106,7 @@ while True:
     # ...
 ```
 
-### 📌 Example: Map + Minimap
+## Examples
 
 See [`example_map.py`](examples/example_map.py) for a full working example of a main visor and a minimap using two independent cameras.
 
