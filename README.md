@@ -62,7 +62,9 @@ while True:
     # Get iterable of surfaces, that cover the bounding box
     # This you need to implement yourself!
     # Return an iterable of tuples: (world_x, world_y, tile_surface)
-    # ... where tile_surface (at the moment) must have world coords width/height. They must not be scaled.
+    # Where tile_surface (at the moment) must have world coords width/height. Surfaces are expected to be
+    # pre-rendered at world-scale (1 unit = 1 pixel in world space). The View system will scale them
+    # appropriately based on screen resolution and view mode.
     tiles = world.get_tiles_iterable(bbox)
 
     # render tiles to surface, the view will autoscale them to the correct size.
