@@ -138,3 +138,17 @@ class View:
         sy = (wy - self.region.y) * factor + ws_y
 
         return sx, sy
+
+    def render(self, surface: pygame.Surface, surface_iterable, *, debug=False):
+        screen_rect = surface.get_rect()
+        factor = self._get_scaling_factor(screen_rect)
+        draw_area = self._get_region_screen_rect(screen_rect)
+        subsurface = surface.subsurface(draw_area)
+
+        for world_xy, surf in surface_iterable:
+            if not math.isclose(factor, 1.0):
+                surf = pygame.transform.scale_by(surf, factor)
+            sx, sy = self.world_to_screen(screen_rect, world_xy)
+            sx -= draw_area.x
+            sy -= draw_area.y
+            subsurface.blit(surf, (sx, sy))
