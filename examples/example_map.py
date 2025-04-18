@@ -18,7 +18,7 @@ def main():
         initial_region=(0, 0, 1000, 750),
         limits=app.limits,
     )
-    map_surface = pygame.Surface((200, 150))
+    map_surface = pygame.Surface((100, 75))
 
     view.move_to(app.player_pos.center)
     map_view.move_to(app.player_pos.center)
@@ -40,7 +40,9 @@ def main():
             (app.player_pos.topleft, app.player_surf)
         ])
 
-        app.screen.blit(map_surface, (700, 450))
+        area = view.get_region_screen_rect(app.screen.get_rect())
+        map_surf_temp = view.scale_surf(app.screen.get_rect(), map_surface)
+        app.screen.blit(map_surf_temp, (area.right - map_surf_temp.width, area.bottom - map_surf_temp.height))
 
         pygame.display.flip()
 

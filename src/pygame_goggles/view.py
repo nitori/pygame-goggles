@@ -99,7 +99,7 @@ class View:
             new_height,
         )
 
-    def _get_scaling_factor(self, screen_rect: ScreenRect) -> float:
+    def get_scaling_factor(self, screen_rect: ScreenRect) -> float:
         sw, sh = self._screen_size(screen_rect)
         screen_ratio = sw / sh
         region_ratio = self.region.width / self.region.height
@@ -108,9 +108,17 @@ class View:
             return sh / self.region.height
         return sw / self.region.width
 
-    def _get_region_screen_rect(self, screen_rect: ScreenRect) -> pygame.Rect:
-        """Return where the region (top left) starts, irrespective of the mode."""
-        factor = self._get_scaling_factor(screen_rect)
+    def scale_surf(self, screen_rect: ScreenRect, surface: pygame.Surface) -> pygame.Surface:
+        factor = self.get_scaling_factor(screen_rect)
+        return pygame.transform.scale_by(surface, factor)
+
+    def get_region_screen_rect(self, screen_rect: ScreenRect) -> pygame.Rect:
+        """
+        Returns a screen rect of the world region translated to the screen, excluding
+        any extended areas (doesn't consider ViewMode for calculcatio).
+        This is so we can place UI or similar within that area.
+        """
+        factor = self.get_scaling_factor(screen_rect)
         sw, sh = self._screen_size(screen_rect)
 
         # world-screen width/height
@@ -131,8 +139,8 @@ class View:
         # expected world_pos = (40, 30)      -- (10% of 400; 10% of 300)
 
         sx, sy = screen_pos
-        factor = self._get_scaling_factor(screen_rect)
-        ws_x, ws_y, _, _ = self._get_region_screen_rect(screen_rect)
+        factor = self.get_scaling_factor(screen_rect)
+        ws_x, ws_y, _, _ = self.get_region_screen_rect(screen_rect)
 
         wx = (sx - ws_x) / factor + self.region.x
         wy = (sy - ws_y) / factor + self.region.y
@@ -153,8 +161,8 @@ class View:
         # expected screen_pos = (384, 108)   -- 240 + 144  (240 padding + 10% of 1440; 10% of 1080)
 
         wx, wy = world_pos
-        factor = self._get_scaling_factor(screen_rect)
-        ws_x, ws_y, _, _ = self._get_region_screen_rect(screen_rect)
+        factor = self.get_scaling_factor(screen_rect)
+        ws_x, ws_y, _, _ = self.get_region_screen_rect(screen_rect)
 
         sx = int((wx - self.region.x) * factor + ws_x)
         sy = int((wy - self.region.y) * factor + ws_y)
@@ -163,8 +171,8 @@ class View:
 
     def render(self, surface: pygame.Surface, surface_iterable: SurfaceIterable, *, debug: bool = False) -> None:
         screen_rect = surface.get_rect()
-        factor = self._get_scaling_factor(screen_rect)
-        draw_area = self._get_region_screen_rect(screen_rect)
+        factor = self.get_scaling_factor(screen_rect)
+        draw_area = self.get_region_screen_rect(screen_rect)
         if self.mode == ViewMode.RegionLetterbox:
             subsurface = surface.subsurface(draw_area)
         else:

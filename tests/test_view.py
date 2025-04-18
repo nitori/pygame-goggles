@@ -59,7 +59,7 @@ def test_bounding_box(mode: ViewMode, initial_region: RectLike, screen_rect: Rec
 ])
 def test_scaling_factor(initial_region: RectLike, screen_rect: RectLike, expected_factor: float):
     view = View(ViewMode.RegionLetterbox, initial_region=initial_region)
-    factor = view._get_scaling_factor(screen_rect)
+    factor = view.get_scaling_factor(screen_rect)
     assert factor == expected_factor
 
 
@@ -71,7 +71,7 @@ def test_scaling_factor(initial_region: RectLike, screen_rect: RectLike, expecte
 ])
 def test_region_screen_rect(initial_region: RectLike, screen_rect: RectLike, expected_world_screen_rect: RectLike):
     view = View(ViewMode.RegionLetterbox, initial_region=initial_region)
-    world_screen_rect = view._get_region_screen_rect(screen_rect)
+    world_screen_rect = view.get_region_screen_rect(screen_rect)
     for a, b in zip(world_screen_rect, expected_world_screen_rect):
         assert math.isclose(a, b), f"Failed for: {tuple(world_screen_rect)} == {expected_world_screen_rect}"
 
