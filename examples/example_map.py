@@ -44,8 +44,6 @@ def main():
         map_surf_temp = view.scale_surf(app.screen.get_rect(), map_surface)
         app.screen.blit(map_surf_temp, (area.right - map_surf_temp.width, area.bottom - map_surf_temp.height))
 
-        pygame.display.flip()
-
 
 if __name__ == '__main__':
     main()

@@ -59,8 +59,6 @@ def main():
         app.screen.blit(text1, (10, 10))
         app.screen.blit(text2, (10, 10 + app.screen.height // 2))
 
-        pygame.display.flip()
-
 
 if __name__ == '__main__':
     main()
