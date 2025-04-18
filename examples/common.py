@@ -73,11 +73,6 @@ class App:
         tiles: Tiles,
         bbox: pygame.FRect
     ) -> Generator[tuple[tuple[float, float], pygame.Surface]]:
-        """
-        Just look through all tiles, and look for the once we need.
-        Terrible performance, but it should work for this example.
-        """
-
         off_x, off_y = self.offset
 
         # find top left most tile
