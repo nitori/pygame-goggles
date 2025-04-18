@@ -15,7 +15,7 @@ def main():
 
     view.move_to(app.player_pos.center)
 
-    font = pygame.Font(pygame.font.get_default_font())
+    font = pygame.Font(pygame.font.get_default_font(), 16)
 
     for delta in app.loop(60):
         view.move_to(app.player_pos.center)
@@ -37,6 +37,11 @@ def main():
             view.render(app.screen, [
                 ((tx, ty), tmp)
             ])
+
+            index_surf = font.render(f'({col}, {row})', True, 'black')
+            # get screen coords, and blit directly into the screen, to prevent scaling of the text
+            sx, sy = view.world_to_screen(app.screen.get_rect(), (tx, ty))
+            app.screen.blit(index_surf, (sx + 2, sy + 5))
 
         # render palyer last.
         view.render(app.screen, [
