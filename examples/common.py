@@ -4,10 +4,13 @@ import math
 
 import pygame
 
+from pygame_goggles.types import WorldPos
+
 SEED = 123
 
 type TileTuple = tuple[float, float, pygame.Surface]
-type Tiles = dict[tuple[int, int], TileTuple]
+type TileIndex = tuple[int, int]  # index as (column, row) pair
+type Tiles = dict[TileIndex, TileTuple]
 
 
 class App:
@@ -73,25 +76,25 @@ class App:
         tiles: Tiles,
         bbox: pygame.FRect
     ) -> Generator[tuple[tuple[float, float], pygame.Surface]]:
-        off_x, off_y = self.offset
+        left_column, top_row = self.get_tile(bbox.topleft)
+        right_column, bottom_row = self.get_tile(bbox.bottomright)
 
-        # find top left most tile
-        bb_x1, bb_y1 = map(int, bbox.topleft)
-
-        left_column = int(bb_x1 - off_x) // self.tile_size
-        top_row = int(bb_y1 - off_y) // self.tile_size
-
-        # find the bottom right most tile
-        bb_x2, bb_y2 = map(math.ceil, bbox.bottomright)
-
-        right_column = int(bb_x2 - off_x) // self.tile_size
-        bottom_row = int(bb_y2 - off_y) // self.tile_size
+        # Some debugging left here
+        # size_x = right_column - left_column + 1
+        # size_y = bottom_row - top_row + 1
+        # print(f'Requesting {size_x * size_y} tiles.')
 
         for row in range(top_row, bottom_row + 1):
             for column in range(left_column, right_column + 1):
                 if data := tiles.get((column, row)):
                     x, y, surf = data
                     yield (x, y), surf
+
+    def get_tile(self, pos: WorldPos) -> TileIndex:
+        x, y = map(int, pos)
+        column = int(x - self.offset[0]) // self.tile_size
+        row = int(y - self.offset[1]) // self.tile_size
+        return column, row
 
     def extended_limits(self, value):
         return [
