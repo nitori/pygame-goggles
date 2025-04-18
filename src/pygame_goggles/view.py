@@ -162,7 +162,9 @@ class View:
 
         for world_xy, surf in surface_iterable:
             if not math.isclose(factor, 1.0):
-                surf = pygame.transform.scale_by(surf, factor)
+                w = math.ceil(surf.get_width() * factor)
+                h = math.ceil(surf.get_height() * factor)
+                surf = pygame.transform.scale(surf, (w, h))
             sx, sy = self.world_to_screen(screen_rect, world_xy)
             sx -= draw_area.x
             sy -= draw_area.y
