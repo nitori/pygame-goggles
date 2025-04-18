@@ -104,10 +104,28 @@ while True:
 
 See [`example_map.py`](examples/example_map.py) for a full working example of a main view and a minimap using two independent cameras.
 
+![example_map.png](examples/screenshots/example_map.png)
+
+---
+
 See [`example_modes.py`](examples/example_modes.py) to demonstrate the difference between `ViewMode.RegionLetterbox` and `ViewMode.RegionExpand`.
+
+![example_modes.png](examples/screenshots/example_modes.png)
+
+---
 
 See [`example_zoom.py`](examples/example_zoom.py) to demonstrate a simple way to zoom your view in and out.
 
+![example_zoom.png](examples/screenshots/example_zoom.png)
+
+---
+
 See [`example_mouse.py`](examples/example_mouse.py) for a demonstration of tracking mouse screen pos to world tile position.
 
+![example_mouse.png](examples/screenshots/example_mouse.png)
+
+---
+
 See [`example_ui.py`](examples/example_ui.py) for a simple UI example, of how to position them in the "active" area, in any ViewMode.
+
+![example_ui.png](examples/screenshots/example_ui.png)
