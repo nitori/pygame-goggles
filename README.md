@@ -66,16 +66,19 @@ surf = pygame.Surface(400, 300)
 # Create a Visor instance
 visor = Visor(
     VisorMode.RegionLetterbox,  # One of two modes (see above)
-    initial_region=(0, 0, 400, 300),  # world region to "view"
+    screen.get_rect(),  # pass in the rect of the surface you wish to draw on.
+    region=(0, 0, 400, 300),  # world region to "view"
     limits=[-2000, -2000, 2000, 2000],  # Optional min/max x,y coords to constrain the visor to.
 )
 
 while True:
     # ...
 
-    # Get the world bounding box (it's a pygame.FRect, indicating the area of
+    # Get the world bounding box (it returns a pygame.FRect, indicating the area of
     # the world that is currently visible)
-    bbox = visor.get_bounding_box(surf.get_rect())
+    # Uses the stored screen rect passed in the constructor.
+    # Use update_screen(new_rect) if your screen/surface got resized.
+    bbox = visor.get_bounding_box()
 
     # Get iterable of surfaces, that cover the bounding box
     # This you need to implement yourself!
@@ -103,7 +106,7 @@ while True:
 
     # update visor based on player position *before* getting the bbox
     visor.move_to(player.rect.center)  # visor.lerp_to(...) is also possible
-    bbox = visor.get_bounding_box(surf.get_rect())
+    bbox = visor.get_bounding_box()
 
     # ... get tiles etc.
 

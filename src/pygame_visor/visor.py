@@ -17,13 +17,21 @@ class VisorMode(Enum):
 
 class Visor:
     mode: VisorMode
+    screen: ScreenSize
     region: FRect
     limits: Limits | None
 
-    def __init__(self, mode: VisorMode, *, initial_region: RectLike, limits: Limits | None = None) -> None:
+    def __init__(self, mode: VisorMode, screen: ScreenRect, *, region: RectLike, limits: Limits | None = None) -> None:
         self.mode = mode
-        self.region = FRect(initial_region)
+        self.screen = self._screen_size(screen)
+        self.region = FRect(region)
         self.limits = limits
+
+    def update_screen(self, screen: ScreenRect) -> None:
+        """
+        Call this whenever your screen size or surface size changes.
+        """
+        self.screen = self._screen_size(screen)
 
     def lerp_to(self, pos: WorldPos, weight: float = 1.0) -> None:
         px, py = pos
@@ -62,11 +70,11 @@ class Visor:
         else:
             raise ValueError(f'screen_rect does not have a valid size of 2 or 4: {len(screen_rect)}')
 
-    def get_bounding_box(self, screen_rect: ScreenRect) -> FRect:
+    def get_bounding_box(self) -> FRect:
         """
         Return the world region that needs to be rendered for display.
         """
-        sw, sh = self._screen_size(screen_rect)
+        sw, sh = self.screen
 
         if self.mode == VisorMode.RegionLetterbox:
             # the region to render is exactly the current region stored
@@ -97,8 +105,8 @@ class Visor:
             new_height,
         )
 
-    def get_scaling_factor(self, screen_rect: ScreenRect) -> float:
-        sw, sh = self._screen_size(screen_rect)
+    def get_scaling_factor(self) -> float:
+        sw, sh = self.screen
         screen_ratio = sw / sh
         region_ratio = self.region.width / self.region.height
 
@@ -106,18 +114,18 @@ class Visor:
             return sh / self.region.height
         return sw / self.region.width
 
-    def scale_surf(self, screen_rect: ScreenRect, surface: pygame.Surface) -> pygame.Surface:
-        factor = self.get_scaling_factor(screen_rect)
+    def scale_surf(self, surface: pygame.Surface) -> pygame.Surface:
+        factor = self.get_scaling_factor()
         return pygame.transform.scale_by(surface, factor)
 
-    def get_region_screen_rect(self, screen_rect: ScreenRect) -> pygame.Rect:
+    def active_screen_area(self) -> pygame.Rect:
         """
         Returns a screen rect of the world region translated to the screen, excluding
         any extended areas (doesn't consider ViewMode for calculcatio).
         This is so we can place UI or similar within that area.
         """
-        factor = self.get_scaling_factor(screen_rect)
-        sw, sh = self._screen_size(screen_rect)
+        factor = self.get_scaling_factor()
+        sw, sh = self.screen
 
         # world-screen width/height
         ws_width = self.region.width * factor
@@ -128,7 +136,7 @@ class Visor:
 
         return pygame.Rect(left, top, ws_width, ws_height)
 
-    def screen_to_world(self, screen_rect: ScreenRect, screen_pos: ScreenPos) -> pygame.Vector2 | None:
+    def screen_to_world(self, screen_pos: ScreenPos) -> pygame.Vector2 | None:
         """May return None in RegionLetterbox, if the pos is outside the bounding box"""
         # ViewMode.RegionLetterbox
         # region = (0, 0, 400, 300)
@@ -137,8 +145,8 @@ class Visor:
         # expected world_pos = (40, 30)      -- (10% of 400; 10% of 300)
 
         sx, sy = screen_pos
-        factor = self.get_scaling_factor(screen_rect)
-        ws_x, ws_y, _, _ = self.get_region_screen_rect(screen_rect)
+        factor = self.get_scaling_factor()
+        ws_x, ws_y, _, _ = self.active_screen_area()
 
         wx = (sx - ws_x) / factor + self.region.x
         wy = (sy - ws_y) / factor + self.region.y
@@ -151,7 +159,7 @@ class Visor:
 
         return pygame.Vector2(wx, wy)
 
-    def world_to_screen(self, screen_rect: ScreenRect, world_pos: WorldPos) -> ScreenPos:
+    def world_to_screen(self, world_pos: WorldPos) -> ScreenPos:
         # ViewMode.RegionLetterbox
         # region = (0, 0, 400, 300)
         # screen_rect = (0, 0, 1920, 1080)   -- region scaled to: (1440, 1080)
@@ -159,18 +167,22 @@ class Visor:
         # expected screen_pos = (384, 108)   -- 240 + 144  (240 padding + 10% of 1440; 10% of 1080)
 
         wx, wy = world_pos
-        factor = self.get_scaling_factor(screen_rect)
-        ws_x, ws_y, _, _ = self.get_region_screen_rect(screen_rect)
+        factor = self.get_scaling_factor()
+        ws_x, ws_y, _, _ = self.active_screen_area()
 
         sx = int((wx - self.region.x) * factor + ws_x)
         sy = int((wy - self.region.y) * factor + ws_y)
 
         return sx, sy
 
-    def render(self, surface: pygame.Surface, surface_iterable: SurfaceIterable, *, debug: bool = False) -> None:
+    def render(self, surface: pygame.Surface, surface_iterable: SurfaceIterable) -> None:
         screen_rect = surface.get_rect()
-        factor = self.get_scaling_factor(screen_rect)
-        draw_area = self.get_region_screen_rect(screen_rect)
+        assert screen_rect.size == self.screen, (
+            'Screen rect sizes differ. Make sure to use update_screen(rect) '
+            'before calling this method, if your screen size changed.'
+        )
+        factor = self.get_scaling_factor()
+        draw_area = self.active_screen_area()
         if self.mode == VisorMode.RegionLetterbox:
             subsurface = surface.subsurface(draw_area)
         else:
@@ -181,7 +193,7 @@ class Visor:
                 w = math.ceil(surf.get_width() * factor)
                 h = math.ceil(surf.get_height() * factor)
                 surf = pygame.transform.scale(surf, (w, h))
-            sx, sy = self.world_to_screen(screen_rect, world_xy)
+            sx, sy = self.world_to_screen(world_xy)
             if self.mode == VisorMode.RegionLetterbox:
                 sx -= draw_area.x
                 sy -= draw_area.y

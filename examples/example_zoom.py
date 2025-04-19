@@ -9,7 +9,8 @@ def main():
 
     view = Visor(
         VisorMode.RegionLetterbox,
-        initial_region=(0, 0, 400, 300),
+        app.screen.get_rect(),
+        region=(0, 0, 400, 300),
         limits=app.extended_limits(10),
     )
 
@@ -26,7 +27,7 @@ def main():
 
     for delta in app.loop(60, event_handler):
         view.move_to(app.player_pos.center)
-        bbox = view.get_bounding_box(app.screen.get_rect())
+        bbox = view.get_bounding_box()
         view.render(app.screen, app.get_tiles_for_bbox(app.tiles, bbox))
         view.render(app.screen, [
             (app.player_pos.topleft, app.player_surf)

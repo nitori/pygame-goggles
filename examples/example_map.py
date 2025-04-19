@@ -9,16 +9,18 @@ def main():
 
     view = Visor(
         VisorMode.RegionLetterbox,
-        initial_region=(0, 0, 400, 300),
+        app.screen.get_rect(),
+        region=(0, 0, 400, 300),
         limits=app.extended_limits(10),
     )
 
+    map_surface = pygame.Surface((100, 75))
     map_view = Visor(
         VisorMode.RegionLetterbox,
-        initial_region=(0, 0, 1000, 750),
+        map_surface.get_rect(),
+        region=(0, 0, 1000, 750),
         limits=app.limits,
     )
-    map_surface = pygame.Surface((100, 75))
 
     view.move_to(app.player_pos.center)
     map_view.move_to(app.player_pos.center)
@@ -27,21 +29,21 @@ def main():
         view.lerp_to(app.player_pos.center, 0.1)
         map_view.move_to(app.player_pos.center)
 
-        bbox = view.get_bounding_box(app.screen.get_rect())
+        bbox = view.get_bounding_box()
         view.render(app.screen, app.get_tiles_for_bbox(app.tiles, bbox))
         view.render(app.screen, [
             (app.player_pos.topleft, app.player_surf)
         ])
 
-        bbox = map_view.get_bounding_box(map_surface.get_rect())
+        bbox = map_view.get_bounding_box()
         map_surface.fill('black')
         map_view.render(map_surface, app.get_tiles_for_bbox(app.tiles, bbox))
         map_view.render(map_surface, [
             (app.player_pos.topleft, app.player_surf)
         ])
 
-        area = view.get_region_screen_rect(app.screen.get_rect())
-        map_surf_temp = view.scale_surf(app.screen.get_rect(), map_surface)
+        area = view.active_screen_area()
+        map_surf_temp = view.scale_surf(map_surface)
         app.screen.blit(map_surf_temp, (area.right - map_surf_temp.width, area.bottom - map_surf_temp.height))
 
 

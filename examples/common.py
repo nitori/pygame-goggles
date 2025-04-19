@@ -26,10 +26,14 @@ type Tiles = dict[TileIndex, TileTuple]
 class App:
     tiles: Tiles
 
-    def __init__(self, size: tuple[int, int] = (800, 600)):
+    def __init__(self, size: tuple[int, int] = (800, 600), *, resizable=False):
         pygame.init()
 
-        self.screen = pygame.display.set_mode(size, pygame.RESIZABLE)
+        flags = 0
+        if resizable:
+            flags = pygame.RESIZABLE
+
+        self.screen = pygame.display.set_mode(size, flags)
         self.clock = pygame.Clock()
 
         self.rows = 150

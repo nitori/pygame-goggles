@@ -9,7 +9,8 @@ def main():
 
     view = Visor(
         VisorMode.RegionExpand,
-        initial_region=(0, 0, 400, 300),
+        app.screen.get_rect(),
+        region=(0, 0, 400, 300),
         limits=app.extended_limits(10),
     )
 
@@ -42,7 +43,7 @@ def main():
 
         # render the map
         view.move_to(app.player_pos.center)
-        bbox = view.get_bounding_box(app.screen.get_rect())
+        bbox = view.get_bounding_box()
         view.render(app.screen, app.get_tiles_for_bbox(app.tiles, bbox))
 
         # render the player
@@ -53,7 +54,7 @@ def main():
         # Render health bar to the "active area".
         # With RegionExpand, the healthbar might be positioned slightly inward
         # and not at the left-most screen border.
-        game_area = view.get_region_screen_rect(app.screen.get_rect())
+        game_area = view.active_screen_area()
         app.screen.blit(health_bar, (game_area.x + 10, game_area.y + 10))
 
         # blit item bar at the bottom center

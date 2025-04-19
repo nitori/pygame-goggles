@@ -9,7 +9,8 @@ def main():
 
     view = Visor(
         VisorMode.RegionLetterbox,
-        initial_region=(0, 0, 400, 300),
+        app.screen.get_rect(),
+        region=(0, 0, 400, 300),
         limits=app.extended_limits(10),
     )
 
@@ -20,13 +21,13 @@ def main():
     for delta in app.loop(60):
         view.move_to(app.player_pos.center)
 
-        bbox = view.get_bounding_box(app.screen.get_rect())
+        bbox = view.get_bounding_box()
         view.render(app.screen, app.get_tiles_for_bbox(app.tiles, bbox))
 
         # highlight mouse position
 
         mouse_pos = pygame.mouse.get_pos()
-        mw_x, mw_y = view.screen_to_world(app.screen.get_rect(), mouse_pos)
+        mw_x, mw_y = view.screen_to_world(mouse_pos)
 
         col, row = app.get_tile((mw_x, mw_y))
         data = app.tiles.get((col, row))
@@ -40,7 +41,7 @@ def main():
 
             index_surf = font.render(f'({col}, {row})', True, 'black')
             # get screen coords, and blit directly into the screen, to prevent scaling of the text
-            sx, sy = view.world_to_screen(app.screen.get_rect(), (tx, ty))
+            sx, sy = view.world_to_screen((tx, ty))
             app.screen.blit(index_surf, (sx + 2, sy + 5))
 
         # render palyer last.

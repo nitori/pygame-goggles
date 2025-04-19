@@ -5,21 +5,23 @@ from common import App
 
 
 def main():
-    app = App()
+    app = App(resizable=True)
+
+    surf1 = pygame.Surface((app.screen.width, app.screen.height // 2))
+    surf2 = pygame.Surface((app.screen.width, app.screen.height // 2))
 
     view1 = Visor(
         VisorMode.RegionLetterbox,
-        initial_region=(0, 0, 400, 300),
+        surf1.get_rect(),
+        region=(0, 0, 400, 300),
         limits=app.extended_limits(10),
     )
     view2 = Visor(
         VisorMode.RegionExpand,
-        initial_region=(0, 0, 400, 300),
+        surf2.get_rect(),
+        region=(0, 0, 400, 300),
         limits=app.extended_limits(10),
     )
-
-    surf1 = pygame.Surface((app.screen.width, app.screen.height // 2))
-    surf2 = pygame.Surface((app.screen.width, app.screen.height // 2))
 
     view1.move_to(app.player_pos.center)
     view2.move_to(app.player_pos.center)
@@ -34,20 +36,22 @@ def main():
         if event.type == pygame.VIDEORESIZE:
             surf1 = pygame.Surface((app.screen.width, app.screen.height // 2))
             surf2 = pygame.Surface((app.screen.width, app.screen.height // 2))
+            view1.update_screen(surf1.get_rect())
+            view2.update_screen(surf2.get_rect())
 
     for delta in app.loop(60, event_handler):
         view1.lerp_to(app.player_pos.center, 0.1)
         view2.lerp_to(app.player_pos.center, 0.1)
 
         surf1.fill('black')
-        bbox = view1.get_bounding_box(surf1.get_rect())
+        bbox = view1.get_bounding_box()
         view1.render(surf1, app.get_tiles_for_bbox(app.tiles, bbox))
         view1.render(surf1, [
             (app.player_pos.topleft, app.player_surf)
         ])
 
         surf2.fill('black')
-        bbox = view2.get_bounding_box(surf2.get_rect())
+        bbox = view2.get_bounding_box()
         view2.render(surf2, app.get_tiles_for_bbox(app.tiles, bbox))
         view2.render(surf2, [
             (app.player_pos.topleft, app.player_surf)
