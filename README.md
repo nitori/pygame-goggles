@@ -8,6 +8,16 @@ Currently only works with `pygame-ce`, as it's using `pygame.FRect` in some part
 
 MIT © 2025 [Sani (https://github.com/nitori)](https://github.com/nitori)
 
+## Install
+
+```
+pip install pygame-visor pygame-ce
+```
+or using `uv`
+```
+uv add pygame-visor pygame-ce
+```
+
 ## Camera/Viewport System – Feature Overview
 
 - [x] Translate between world and screen coordinates (`world_to_screen`, `screen_to_world`)
