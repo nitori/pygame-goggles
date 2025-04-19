@@ -10,6 +10,8 @@ MIT © 2025 [Sani (https://github.com/nitori)](https://github.com/nitori)
 
 ## Install
 
+Currently `pygame-ce` is required instead of `pygame`. If you have `pygame` installed, uninstall it first.
+
 ```
 pip install pygame-visor pygame-ce
 ```
