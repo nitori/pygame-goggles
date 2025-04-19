@@ -1,7 +1,7 @@
 [project]
 name = "pygame-visor"
 version = "0.1.1"
-description = "Add your description here"
+description = "Pygame Visor - a simple Camera/Viewport library"
 readme = "README.md"
 authors = [
     { name = "Nitori", email = "nitori@chireiden.net" }
