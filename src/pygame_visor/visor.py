@@ -136,10 +136,6 @@ class Visor:
             return sh / self.region.height
         return sw / self.region.width
 
-    def scale_surf(self, surface: pygame.Surface) -> pygame.Surface:
-        factor = self.get_scaling_factor()
-        return pygame.transform.scale_by(surface, factor)
-
     def get_active_screen_area(self) -> pygame.Rect:
         """
         Returns a screen rect of the world region translated to the screen, excluding

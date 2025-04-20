@@ -43,7 +43,8 @@ def main():
         ])
 
         area = view.get_active_screen_area()
-        map_surf_temp = view.scale_surf(map_surface)
+        factor = view.get_scaling_factor()
+        map_surf_temp = pygame.transform.scale_by(map_surface, factor)
         app.screen.blit(map_surf_temp, (area.right - map_surf_temp.width, area.bottom - map_surf_temp.height))
 
 
