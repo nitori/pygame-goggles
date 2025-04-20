@@ -57,7 +57,7 @@ def main():
             shake_delta = pygame.time.get_ticks() / 1000 - shake_start
             if shake_delta > shake_time:
                 shake_start = None
-            progress = min(1.0, max(0.0, shake_delta / shake_time))
+            progress = pygame.math.clamp(shake_delta / shake_time, 0.0, 1.0)
             eased = 1.0 - ease_out_elastic(progress)
             # region was already moved to player center
             # so we offset the region slightly (works, best as view.region is an FRect)
