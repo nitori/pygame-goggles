@@ -29,7 +29,7 @@ type Tiles = dict[TileIndex, TileTuple]
 class App:
     tiles: Tiles
 
-    def __init__(self, size: tuple[int, int] = (800, 600), *, resizable=False):
+    def __init__(self, size: tuple[int, int] = (800, 600), *, resizable=False, second_player=False):
         pygame.init()
 
         flags = 0
@@ -77,6 +77,14 @@ class App:
 
         # world pos
         self.player_pos = self.player_surf.get_rect(center=(0, 0))
+
+        self.second_player = second_player
+        self.player2_surf = None
+        self.player2_pos = None
+        if second_player:
+            self.player2_surf = pygame.Surface((10, 10))
+            self.player2_surf.fill('blue')
+            self.player2_pos = self.player2_surf.get_rect(center=(20, 0))
 
     def generate_world_tiles(self) -> Tiles:
         """
@@ -133,6 +141,15 @@ class App:
             self.limits[3] + value,
         )
 
+    @staticmethod
+    def get_input_vector(wasd: tuple[int, int, int, int]) -> pygame.Vector2:
+        up, left, down, right = wasd
+        keys = pygame.key.get_pressed()
+        direction = pygame.Vector2(keys[right] - keys[left], keys[down] - keys[up])
+        if direction.length_squared() > 1:
+            direction.normalize_ip()
+        return direction
+
     def loop(self, fps: int, callback=None):
         frames = 0
         acc_deltas = 0
@@ -150,15 +167,14 @@ class App:
 
             delta = self.clock.tick(fps) / 1000
 
-            keys = pygame.key.get_pressed()
-            direction = pygame.Vector2(
-                keys[pygame.K_d] - keys[pygame.K_a],
-                keys[pygame.K_s] - keys[pygame.K_w],
-            )
-
-            if direction.length() > 0:
-                direction.normalize_ip()
+            direction = self.get_input_vector((pygame.K_w, pygame.K_a, pygame.K_s, pygame.K_d))
+            if direction:
                 self.player_pos.center += direction * self.speed * delta
+
+            if self.second_player:
+                direction2 = self.get_input_vector((pygame.K_UP, pygame.K_LEFT, pygame.K_DOWN, pygame.K_RIGHT))
+                if direction2:
+                    self.player2_pos.center += direction2 * self.speed * delta
 
             self.screen.fill('black')
 

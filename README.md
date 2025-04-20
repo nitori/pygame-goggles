@@ -153,4 +153,10 @@ See [`example_ui.py`](examples/example_ui.py) for a simple UI example, of how to
 
 ---
 
+See [`example_split_screen.py`](examples/example_split_screen.py) for a simple split screen example with two player. Using WASD and Arrow keys for independent movement.
+
+![example_split_screen.png](examples/screenshots/example_split_screen.png)**
+
+---
+
 See [`example_shake.py`](examples/example_shake.py) for a simple shaking camera example.
