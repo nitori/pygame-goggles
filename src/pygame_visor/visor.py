@@ -33,7 +33,7 @@ class Visor:
         self.region = FRect(region)
         self.set_limits(limits)
 
-    def set_limits(self, limits: Limits | None):
+    def set_limits(self, limits: Limits | None) -> None:
         if limits is not None and not is_limits(limits):
             raise ValueError(f'Limits specified do not have the right format. '
                              f'Makes sure they\'re of type: {Limits.__value__}')
@@ -198,7 +198,7 @@ class Visor:
         return pygame.transform.scale(surface, (width, heigth))
 
     @classmethod
-    def update_scaling_cache(cls, maxsize: int):
+    def update_scaling_cache(cls, maxsize: int) -> None:
         """
         Usually 20 entries is enough if your surfaces are sufficiently large (recommended).
         But you can increase it using this method. Set it to a value of at *minimum* the number of
@@ -212,14 +212,14 @@ class Visor:
             original_method = cls._get_scaled_surface
 
         cls.clear_scaling_cache()
-        cls._get_scaled_surface = functools.lru_cache(maxsize=maxsize)(original_method)
+        cls._get_scaled_surface = functools.lru_cache(maxsize=maxsize)(original_method)  # type: ignore[method-assign]
 
     @classmethod
     def get_scaling_cache_info(cls) -> functools._CacheInfo:
         return cls._get_scaled_surface.cache_info()
 
     @classmethod
-    def clear_scaling_cache(cls):
+    def clear_scaling_cache(cls) -> None:
         if hasattr(cls._get_scaled_surface, 'cache_clear'):
             cls._get_scaled_surface.cache_clear()
 
