@@ -1,4 +1,4 @@
-# Pygame Visor
+**# Pygame Visor
 
 Camera/Viewport library.
 
@@ -149,4 +149,8 @@ See [`example_mouse.py`](examples/example_mouse.py) for a demonstration of track
 
 See [`example_ui.py`](examples/example_ui.py) for a simple UI example, of how to position them in the "active" area, in any VisorMode.
 
-![example_ui.png](examples/screenshots/example_ui.png)
+![example_ui.png](examples/screenshots/example_ui.png)**
+
+---
+
+See [`example_shake.py`](examples/example_shake.py) for a simple shaking camera example.
