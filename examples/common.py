@@ -11,6 +11,9 @@ code focused on demonstrating viewport/camera functionality.
 
 from typing import Generator
 import random
+import sys
+import os
+import inspect
 
 import pygame
 
@@ -34,6 +37,18 @@ class App:
             flags = pygame.RESIZABLE
 
         self.screen = pygame.display.set_mode(size, flags)
+
+        filename = '<unknown>'
+        if sys.argv and sys.argv[0]:
+            filename = os.path.basename(sys.argv[0])
+
+        if not filename:
+            stack = inspect.stack()
+            if len(stack) >= 2:
+                calling_file = stack[1].filename
+                filename = os.path.basename(calling_file)
+
+        pygame.display.set_caption(f'pygame-visor example {filename} - Python {sys.version}')
         self.clock = pygame.Clock()
 
         self.rows = 150
