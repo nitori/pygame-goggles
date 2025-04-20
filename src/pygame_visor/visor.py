@@ -5,7 +5,12 @@ import pygame
 from pygame import FRect
 from pygame.typing import RectLike
 
-from .types import WorldPos, ScreenPos, ScreenSize, ScreenRect, is_screen_rect, is_screen_size, Limits, SurfaceIterable
+from .types import (
+    WorldPos, ScreenPos, ScreenSize, ScreenRect,
+    SurfaceIterable,
+    is_screen_rect, is_screen_size,
+    Limits, is_limits,
+)
 
 __all__ = ['VisorMode', 'Visor']
 
@@ -25,6 +30,9 @@ class Visor:
         self.mode = mode
         self.screen = self._screen_size(screen)
         self.region = FRect(region)
+        if limits is not None and not is_limits(limits):
+            raise ValueError(f'Limits specified do not have the right format. '
+                             f'Makes sure they\'re of type: {Limits.__value__}')
         self.limits = limits
 
     def update_screen(self, screen: ScreenRect) -> None:

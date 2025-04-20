@@ -10,7 +10,7 @@ __all__ = [
     'is_screen_rect', 'is_screen_size',
     'is_world_rect', 'is_world_size',
     'SurfaceIterable',
-    'Limits',
+    'Limits', 'is_limits',
 ]
 
 type IntPair = tuple[int, int]
@@ -46,3 +46,7 @@ def is_world_rect(s: WorldRect) -> TypeGuard[IntQuad | FloatQuad | Rect | FRect]
 
 def is_world_size(s: WorldRect) -> TypeGuard[WorldSize]:
     return len(s) == 2
+
+
+def is_limits(s: Limits) -> TypeGuard[IntQuad | FloatQuad]:
+    return len(s) == 4 and isinstance(s, tuple) and all(isinstance(v, (int, float)) for v in s)
