@@ -1,4 +1,4 @@
-**# Pygame Visor
+# Pygame Visor
 
 Camera/Viewport library.
 
