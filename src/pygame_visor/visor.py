@@ -58,15 +58,22 @@ class Visor:
 
         lx1, ly1, lx2, ly2 = self.limits
 
-        x1, y1 = self.region.topleft
-        x1 = max(x1, lx1)
-        y1 = max(y1, ly1)
-        self.region.topleft = x1, y1
+        l_width = abs(lx2 - lx1)
+        l_height = abs(ly2 - ly1)
 
-        x2, y2 = self.region.bottomright
-        x2 = min(x2, lx2)
-        y2 = min(y2, ly2)
-        self.region.bottomright = x2, y2
+        if l_width < self.region.width:
+            self.region.centerx = lx1 + l_width / 2
+        elif self.region.left < lx1:
+            self.region.left = lx1
+        elif self.region.right > lx2:
+            self.region.right = lx2
+
+        if l_height < self.region.height:
+            self.region.centery = ly1 + l_height / 2
+        elif self.region.top < ly1:
+            self.region.top = ly1
+        elif self.region.bottom > ly2:
+            self.region.bottom = ly2
 
     @staticmethod
     def _screen_size(screen_rect: ScreenRect) -> ScreenSize:

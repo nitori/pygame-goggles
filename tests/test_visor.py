@@ -4,7 +4,7 @@ import pytest
 from pygame.typing import RectLike
 
 from pygame_visor import Visor, VisorMode
-from pygame_visor.types import ScreenPos, WorldPos, ScreenSize
+from pygame_visor.types import ScreenPos, WorldPos, Limits, ScreenSize
 
 
 @pytest.mark.parametrize("region,move_to,expected_region,expected_end", [
@@ -139,3 +139,34 @@ def test_world_to_screen(
 
     for a, b in zip(screen_pos, expected_screen_pos):
         assert math.isclose(a, b), f"Failed for {mode} width: {tuple(screen_pos)} == {expected_screen_pos}"
+
+
+@pytest.mark.parametrize("mode,region,screen_size,limits,move_to,expected_bounding_box", [
+    [VisorMode.RegionLetterbox, (0, 0, 100, 100), (100, 100), (0, 0, 100, 100), (10, 10), (0, 0, 100, 100)],
+    [VisorMode.RegionExpand, (0, 0, 100, 100), (100, 100), (0, 0, 100, 100), (10, 10), (0, 0, 100, 100)],
+
+    # <note>
+    # The folowing expected_bounding_box values where taken from the actual output
+    # from a (seemingly) working version. In case you encounter strange behaviour, but the tests succeed,
+    # don't hesitate to adjust the test.
+    [VisorMode.RegionLetterbox, (0, 0, 960, 540), (1280, 720), (-320, -320, 352, 352), (10, 10),
+     (-464, -260, 960, 540)],
+    [VisorMode.RegionLetterbox, (0, 0, 960, 540), (1280, 720), (-320, -320, 352, 352), (950, 530),
+     (-464, -188, 960, 540)],
+    [VisorMode.RegionExpand, (0, 0, 960, 540), (1280, 720), (-320, -320, 352, 352), (10, 10),
+     (-464, -260, 960, 540)],
+    [VisorMode.RegionExpand, (0, 0, 960, 540), (1280, 720), (-320, -320, 352, 352), (950, 530),
+     (-464, -188, 960, 540)],
+    # </note>
+])
+def test_limits_bounding_box(
+    mode: VisorMode,
+    region: RectLike,
+    screen_size: ScreenSize,
+    limits: Limits,
+    move_to: WorldPos,
+    expected_bounding_box: RectLike,
+):
+    view = Visor(mode, screen_size, region=region, limits=limits)
+    view.move_to(move_to)
+    assert tuple(view.get_bounding_box()) == expected_bounding_box
