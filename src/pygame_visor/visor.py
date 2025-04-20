@@ -30,6 +30,9 @@ class Visor:
         self.mode = mode
         self.screen = self._screen_size(screen)
         self.region = FRect(region)
+        self.set_limits(limits)
+
+    def set_limits(self, limits: Limits | None):
         if limits is not None and not is_limits(limits):
             raise ValueError(f'Limits specified do not have the right format. '
                              f'Makes sure they\'re of type: {Limits.__value__}')
