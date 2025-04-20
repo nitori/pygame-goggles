@@ -17,7 +17,7 @@ import inspect
 
 import pygame
 
-from pygame_visor.types import WorldPos
+from pygame_visor.types import WorldPos, Limits
 
 SEED = 123
 
@@ -62,12 +62,12 @@ class App:
 
         self.tiles = self.generate_world_tiles()
 
-        self.limits = [
+        self.limits = (
             self.offset[0],
             self.offset[1],
             self.offset[0] + self.columns * self.tile_size,
             self.offset[1] + self.rows * self.tile_size,
-        ]
+        )
 
         self.speed = 200
 
@@ -125,13 +125,13 @@ class App:
         row = int(y - self.offset[1]) // self.tile_size
         return column, row
 
-    def extended_limits(self, value):
-        return [
+    def extended_limits(self, value) -> Limits:
+        return (
             self.limits[0] - value,
             self.limits[1] - value,
             self.limits[2] + value,
             self.limits[3] + value,
-        ]
+        )
 
     def loop(self, fps: int, callback=None):
         frames = 0
