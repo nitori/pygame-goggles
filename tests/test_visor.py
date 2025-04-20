@@ -68,9 +68,9 @@ def test_scaling_factor(region: RectLike, screen_rect: RectLike, expected_factor
     [(0, 0, 800, 600), (400, 300), (0, 0, 400, 300)],
     [(0, 0, 400, 300), (1080, 1920), (0, 555, 1080, 810)],
 ])
-def test_region_screen_rect(region: RectLike, screen_rect: RectLike, expected_world_screen_rect: RectLike):
+def test_active_screen_area(region: RectLike, screen_rect: RectLike, expected_world_screen_rect: RectLike):
     view = Visor(VisorMode.RegionLetterbox, screen_rect, region=region)
-    world_screen_rect = view.active_screen_area()
+    world_screen_rect = view.get_active_screen_area()
     for a, b in zip(world_screen_rect, expected_world_screen_rect):
         assert math.isclose(a, b), f"Failed for: {tuple(world_screen_rect)} == {expected_world_screen_rect}"
 

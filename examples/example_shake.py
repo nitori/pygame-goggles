@@ -72,7 +72,7 @@ def main():
             (app.player_pos.topleft, app.player_surf)
         ])
 
-        active_area = view.active_screen_area()
+        active_area = view.get_active_screen_area()
 
         # show a button
         r = button.get_rect()

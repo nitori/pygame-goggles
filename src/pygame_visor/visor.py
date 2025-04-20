@@ -118,7 +118,7 @@ class Visor:
         factor = self.get_scaling_factor()
         return pygame.transform.scale_by(surface, factor)
 
-    def active_screen_area(self) -> pygame.Rect:
+    def get_active_screen_area(self) -> pygame.Rect:
         """
         Returns a screen rect of the world region translated to the screen, excluding
         any extended areas (doesn't consider ViewMode for calculcatio).
@@ -146,7 +146,7 @@ class Visor:
 
         sx, sy = screen_pos
         factor = self.get_scaling_factor()
-        ws_x, ws_y, _, _ = self.active_screen_area()
+        ws_x, ws_y, _, _ = self.get_active_screen_area()
 
         wx = (sx - ws_x) / factor + self.region.x
         wy = (sy - ws_y) / factor + self.region.y
@@ -168,7 +168,7 @@ class Visor:
 
         wx, wy = world_pos
         factor = self.get_scaling_factor()
-        ws_x, ws_y, _, _ = self.active_screen_area()
+        ws_x, ws_y, _, _ = self.get_active_screen_area()
 
         sx = int((wx - self.region.x) * factor + ws_x)
         sy = int((wy - self.region.y) * factor + ws_y)
@@ -182,7 +182,7 @@ class Visor:
             'before calling this method, if your screen size changed.'
         )
         factor = self.get_scaling_factor()
-        draw_area = self.active_screen_area()
+        draw_area = self.get_active_screen_area()
         if self.mode == VisorMode.RegionLetterbox:
             subsurface = surface.subsurface(draw_area)
         else:

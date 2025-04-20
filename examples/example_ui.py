@@ -54,7 +54,7 @@ def main():
         # Render health bar to the "active area".
         # With RegionExpand, the healthbar might be positioned slightly inward
         # and not at the left-most screen border.
-        game_area = view.active_screen_area()
+        game_area = view.get_active_screen_area()
         app.screen.blit(health_bar, (game_area.x + 10, game_area.y + 10))
 
         # blit item bar at the bottom center
