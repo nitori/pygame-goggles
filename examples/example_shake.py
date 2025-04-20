@@ -50,6 +50,12 @@ def main():
 
     default_cursor = pygame.mouse.get_cursor()
 
+    def try_set_cursor(cursor):
+        try:
+            pygame.mouse.set_cursor(cursor)
+        except Exception as e:
+            print(f'could not set cursor {cursor}. ignoring.', e)
+
     for delta in app.loop(60):
         view.move_to(app.player_pos.center)
 
@@ -83,12 +89,12 @@ def main():
 
         mx, my = pygame.mouse.get_pos()
         if r.collidepoint(mx, my):
-            pygame.mouse.set_cursor(pygame.cursors.tri_left)
+            try_set_cursor(pygame.cursors.tri_left)
             if pygame.mouse.get_just_pressed()[0]:
                 shake_start = pygame.time.get_ticks() / 1000
                 x, y = random.sample((1.0, 0.0), k=2)
         else:
-            pygame.mouse.set_cursor(default_cursor)
+            try_set_cursor(default_cursor)
 
 
 if __name__ == '__main__':
