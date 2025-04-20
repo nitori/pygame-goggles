@@ -4,7 +4,7 @@ import pytest
 from pygame.typing import RectLike
 
 from pygame_visor import Visor, VisorMode
-from pygame_visor.types import ScreenPos, WorldPos
+from pygame_visor.types import ScreenPos, WorldPos, ScreenSize
 
 
 @pytest.mark.parametrize("region,move_to,expected_region,expected_end", [
@@ -26,7 +26,7 @@ def test_move_to(region: RectLike, move_to: WorldPos, expected_region: RectLike,
         assert tuple(view.region.bottomright) == expected_end, f"Failed for {mode}"
 
 
-@pytest.mark.parametrize("mode,region,screen_rect,expected_bounding_box", [
+@pytest.mark.parametrize("mode,region,screen_size,expected_bounding_box", [
     # the region stays exactly the same.
     [VisorMode.RegionLetterbox, (0, 0, 400, 300), (400, 300), (0, 0, 400, 300)],
     [VisorMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (0, 0, 400, 300)],
@@ -44,38 +44,38 @@ def test_move_to(region: RectLike, move_to: WorldPos, expected_region: RectLike,
     [VisorMode.RegionExpand, (-549, 317, 400, 300), (1920, 1080), (-616, 317, 534, 300)],
     [VisorMode.RegionExpand, (-549, 317, 400, 300), (1080, 1920), (-549, 111, 400, 712)],
 ])
-def test_bounding_box(mode: VisorMode, region: RectLike, screen_rect: RectLike, expected_bounding_box: RectLike):
-    view = Visor(mode, screen_rect, region=region)
+def test_bounding_box(mode: VisorMode, region: RectLike, screen_size: ScreenSize, expected_bounding_box: RectLike):
+    view = Visor(mode, screen_size, region=region)
     bounding_box = view.get_bounding_box()
     for a, b in zip(tuple(bounding_box), expected_bounding_box):
         assert math.isclose(a, b), f"Failed for {mode} with: {tuple(bounding_box)} == {expected_bounding_box}"
 
 
-@pytest.mark.parametrize("region,screen_rect,expected_factor", [
+@pytest.mark.parametrize("region,screen_size,expected_factor", [
     [(0, 0, 400, 300), (400, 300), 1.0],
     [(0, 0, 400, 300), (1920, 1080), 3.6],
     [(0, 0, 800, 600), (400, 300), 0.5],
 ])
-def test_scaling_factor(region: RectLike, screen_rect: RectLike, expected_factor: float):
-    view = Visor(VisorMode.RegionLetterbox, screen_rect, region=region)
+def test_scaling_factor(region: RectLike, screen_size: ScreenSize, expected_factor: float):
+    view = Visor(VisorMode.RegionLetterbox, screen_size, region=region)
     factor = view.get_scaling_factor()
     assert factor == expected_factor
 
 
-@pytest.mark.parametrize("region,screen_rect,expected_world_screen_rect", [
+@pytest.mark.parametrize("region,screen_size,expected_active_screen_area", [
     [(0, 0, 400, 300), (400, 300), (0, 0, 400, 300)],
     [(0, 0, 400, 300), (1920, 1080), (240, 0, 1440, 1080)],
     [(0, 0, 800, 600), (400, 300), (0, 0, 400, 300)],
     [(0, 0, 400, 300), (1080, 1920), (0, 555, 1080, 810)],
 ])
-def test_active_screen_area(region: RectLike, screen_rect: RectLike, expected_world_screen_rect: RectLike):
-    view = Visor(VisorMode.RegionLetterbox, screen_rect, region=region)
-    world_screen_rect = view.get_active_screen_area()
-    for a, b in zip(world_screen_rect, expected_world_screen_rect):
-        assert math.isclose(a, b), f"Failed for: {tuple(world_screen_rect)} == {expected_world_screen_rect}"
+def test_active_screen_area(region: RectLike, screen_size: ScreenSize, expected_active_screen_area: RectLike):
+    view = Visor(VisorMode.RegionLetterbox, screen_size, region=region)
+    active_screen_area = view.get_active_screen_area()
+    for a, b in zip(active_screen_area, expected_active_screen_area):
+        assert math.isclose(a, b), f"Failed for: {tuple(active_screen_area)} == {expected_active_screen_area}"
 
 
-@pytest.mark.parametrize("mode,region,screen_rect,screen_pos,expected_world_pos", [
+@pytest.mark.parametrize("mode,region,screen_size,screen_pos,expected_world_pos", [
     [VisorMode.RegionLetterbox, (0, 0, 400, 300), (400, 300), (200, 150), (200, 150)],
     [VisorMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (960, 540), (200, 150)],
     [VisorMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (384, 108), (40, 30)],
@@ -100,11 +100,11 @@ def test_active_screen_area(region: RectLike, screen_rect: RectLike, expected_wo
 def test_screen_to_world(
     mode: VisorMode,
     region: RectLike,
-    screen_rect: RectLike,
+    screen_size: ScreenSize,
     screen_pos: ScreenPos,
     expected_world_pos: WorldPos | None
 ):
-    view = Visor(mode, screen_rect, region=region)
+    view = Visor(mode, screen_size, region=region)
     world_pos = view.screen_to_world(screen_pos)
     if expected_world_pos is None or world_pos is None:
         assert world_pos == expected_world_pos
@@ -113,7 +113,7 @@ def test_screen_to_world(
             assert math.isclose(a, b), f"Failed for {mode} width: {tuple(world_pos)} == {expected_world_pos}"
 
 
-@pytest.mark.parametrize("mode,region,screen_rect,world_pos,expected_screen_pos", [
+@pytest.mark.parametrize("mode,region,screen_size,world_pos,expected_screen_pos", [
     [VisorMode.RegionLetterbox, (0, 0, 400, 300), (400, 300), (200, 150), (200, 150)],
     [VisorMode.RegionLetterbox, (100, 100, 400, 300), (400, 300), (300, 250), (200, 150)],
     [VisorMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (200, 150), (960, 540)],
@@ -130,11 +130,11 @@ def test_screen_to_world(
 def test_world_to_screen(
     mode: VisorMode,
     region: RectLike,
-    screen_rect: RectLike,
+    screen_size: ScreenSize,
     world_pos: WorldPos,
     expected_screen_pos: ScreenPos
 ):
-    view = Visor(mode, screen_rect, region=region)
+    view = Visor(mode, screen_size, region=region)
     screen_pos = view.world_to_screen(world_pos)
 
     for a, b in zip(screen_pos, expected_screen_pos):
