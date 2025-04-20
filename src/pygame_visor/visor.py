@@ -1,5 +1,6 @@
 from enum import Enum, auto
 import math
+import functools
 
 import pygame
 from pygame import FRect
@@ -42,7 +43,10 @@ class Visor:
         """
         Call this whenever your screen size or surface size changes.
         """
+        old_screen = self.screen
         self.screen = self._screen_size(screen)
+        if old_screen != self.screen:
+            self.clear_scaling_cache()
 
     def lerp_to(self, pos: WorldPos, weight: float = 1.0) -> None:
         px, py = pos
@@ -193,6 +197,36 @@ class Visor:
 
         return sx, sy
 
+    @functools.lru_cache(maxsize=20)
+    def _get_scaled_surface(self, surface: pygame.Surface, width: int, heigth: int) -> pygame.Surface:
+        return pygame.transform.scale(surface, (width, heigth))
+
+    @classmethod
+    def update_scaling_cache(cls, maxsize: int):
+        """
+        Usually 20 entries is enough if your surfaces are sufficiently large (recommended).
+        But you can increase it using this method. Set it to a value of at *minimum* the number of
+        surfaces you expect to be passed to the render method below.
+
+        Use get_scaling_cache_info() to get stats on the current size and hits/misses.
+        If the misses stay mostly static while the camera is not moving, that's usually a good sign.
+        """
+        original_method = getattr(cls._get_scaled_surface, '__wrapped__', None)
+        if original_method is None:
+            original_method = cls._get_scaled_surface
+
+        cls.clear_scaling_cache()
+        cls._get_scaled_surface = functools.lru_cache(maxsize=maxsize)(original_method)
+
+    @classmethod
+    def get_scaling_cache_info(cls) -> functools._CacheInfo:
+        return cls._get_scaled_surface.cache_info()
+
+    @classmethod
+    def clear_scaling_cache(cls):
+        if hasattr(cls._get_scaled_surface, 'cache_clear'):
+            cls._get_scaled_surface.cache_clear()
+
     def render(self, surface: pygame.Surface, surface_iterable: SurfaceIterable) -> None:
         screen_rect = surface.get_rect()
         assert screen_rect.size == self.screen, (
@@ -210,7 +244,7 @@ class Visor:
             if not math.isclose(factor, 1.0):
                 w = math.ceil(surf.get_width() * factor)
                 h = math.ceil(surf.get_height() * factor)
-                surf = pygame.transform.scale(surf, (w, h))
+                surf = self._get_scaled_surface(surf, w, h)
             sx, sy = self.world_to_screen(world_xy)
             if self.mode == VisorMode.RegionLetterbox:
                 sx -= draw_area.x
