@@ -9,7 +9,7 @@ Not intended for production use—just a simple, reusable base to keep example
 code focused on demonstrating viewport/camera functionality.
 """
 
-from typing import Generator
+from collections.abc import Generator
 import random
 import sys
 import os
