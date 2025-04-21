@@ -14,12 +14,12 @@ def main():
         limits=app.extended_limits(10),
     )
 
-    view.move_to((0, 0))
+    current_center = app.player_pos.center
+    view.move_to(current_center)
 
-    def create_new_neighbours():
-        r = view.region
+    def create_new_neighbours(r):
         return [
-            (side, view.region.copy().move(dx, dy))
+            (side, r.copy().move(dx, dy))
             for side, (dx, dy) in [
                 ('up', (0, -r.height)),
                 ('right', (r.width, 0)),
@@ -28,16 +28,20 @@ def main():
             ]
         ]
 
-    neighbours = create_new_neighbours()
+    neighbours = create_new_neighbours(view.region)
     exclude = None
     exclude_map = {'left': 'right', 'right': 'left', 'up': 'bottom', 'bottom': 'up'}
 
     for delta in app.loop(60):
+        view.lerp_to(current_center, 0.1)
+
         for side, sr in neighbours:
             if app.player_pos.colliderect(sr):
                 if side != exclude:
-                    view.move_to(sr.center)
-                    neighbours = create_new_neighbours()
+                    current_center = sr.center
+                    if side in ('left', 'right'):
+                        view.move_to(sr.center)
+                    neighbours = create_new_neighbours(sr)
                     exclude = exclude_map[side]
                 break
         else:
