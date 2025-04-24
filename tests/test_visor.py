@@ -83,6 +83,10 @@ def test_active_screen_area(region: RectLike, screen_size: ScreenSize, expected_
 
     [VisorMode.RegionLetterbox, (100, 100, 400, 300), (400, 300), (200, 150), (300, 250)],
 
+    # check left/right edges in Letterbox, with non-zero offsets. Caught a bug earlier in another test.
+    [VisorMode.RegionLetterbox, (25, 25, 50, 50), (100, 100), (0, 0), (25, 25)],
+    [VisorMode.RegionLetterbox, (25, 25, 50, 50), (100, 100), (98, 98), (74, 74)],
+
     [VisorMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (1679, 1079),
      (400 / 1440 * 1439, 300 / 1080 * 1079)],
 
@@ -120,6 +124,10 @@ def test_screen_to_world(
     [VisorMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (40, 30), (384, 108)],
     [VisorMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (0, 0), (240, 0)],
     [VisorMode.RegionLetterbox, (0, 0, 400, 300), (1920, 1080), (400 / 1440 * 1439, 300 / 1080 * 1079), (1679, 1079)],
+
+    # same as screen_to_world, though it shouldn't be an issue here anyway.
+    [VisorMode.RegionLetterbox, (25, 25, 50, 50), (100, 100), (25, 25), (0, 0)],
+    [VisorMode.RegionLetterbox, (25, 25, 50, 50), (100, 100), (74, 74), (98, 98)],
 
     [VisorMode.RegionExpand, (0, 0, 400, 300), (1920, 1080), (0, 0), (240, 0)],
     [VisorMode.RegionExpand, (0, 0, 400, 300), (1920, 1080), (400, 300), (1680, 1080)],

@@ -170,8 +170,8 @@ class Visor:
         wy = (sy - ws_y) / factor + self.region.y
 
         if self.mode == VisorMode.RegionLetterbox:
-            if self.region.x <= wx < self.region.width \
-                and self.region.y <= wy < self.region.height:
+            if self.region.left <= wx < self.region.right \
+                and self.region.top <= wy < self.region.bottom:
                 return pygame.Vector2(wx, wy)
             return None
 
