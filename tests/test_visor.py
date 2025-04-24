@@ -178,3 +178,33 @@ def test_limits_bounding_box(
     view = Visor(mode, screen_size, region=region, limits=limits)
     view.move_to(move_to)
     assert tuple(view.get_bounding_box()) == expected_bounding_box
+
+
+@pytest.mark.parametrize('mode', [VisorMode.RegionExpand, VisorMode.RegionLetterbox])
+@pytest.mark.parametrize('region,screen_size,factor,world_pos,expected_region,expected_center', [
+    [(0, 0, 100, 100), (100, 100), 2.0, (0, 0), (0, 0, 200, 200), (100, 100)],
+    [(0, 0, 100, 100), (100, 100), 2.0, (50, 50), (-50, -50, 200, 200), (50, 50)],
+    [(0, 0, 100, 100), (100, 100), 2.0, None, (-50, -50, 200, 200), (50, 50)],
+    [(0, 0, 100, 100), (100, 100), 2.0, (98, 98), (-98, -98, 200, 200), (2, 2)],
+
+    [(0, 0, 100, 100), (100, 100), 0.5, (0, 0), (0, 0, 50, 50), (25, 25)],
+    [(0, 0, 100, 100), (100, 100), 0.5, (50, 50), (25, 25, 50, 50), (50, 50)],
+    [(0, 0, 100, 100), (100, 100), 0.5, None, (25, 25, 50, 50), (50, 50)],
+])
+def test_scale_by_at(
+    mode: VisorMode,
+    region: RectLike,
+    screen_size: ScreenSize,
+    factor: float,
+    world_pos: WorldPos,
+    expected_region: RectLike,
+    expected_center: WorldPos
+):
+    view = Visor(
+        mode,
+        screen_size,
+        region=region
+    )
+    view.scale_by_at(factor, world_pos)
+    assert tuple(view.region) == expected_region
+    assert tuple(view.region.center) == expected_center
