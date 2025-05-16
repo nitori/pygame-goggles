@@ -79,12 +79,17 @@ class Visor:
         elif self.region.bottom > ly2:
             self.region.bottom = ly2
 
-    def scale_by_at(self, factor: int | float, pos: WorldPos | None = None):
+    def scale_by_at(self, factor: int | float, pos: WorldPos | None = None) -> None:
         """Scale (zoom in/out) by factor around the given world pos. If None, center is used."""
         wx, wy = pos if pos is not None else self.region.center
         screen_pos = self.world_to_screen((wx, wy))
         self.region.scale_by_ip(factor, factor)
-        wx2, wy2 = self.screen_to_world(screen_pos)
+
+        wxy = self.screen_to_world(screen_pos)
+        if wxy is None:
+            raise ValueError('Cannot scale outside the world')
+
+        wx2, wy2 = wxy
         wdx, wdy = wx - wx2, wy - wy2
         cx, cy = self.region.center
         self.move_to((wdx + cx, wdy + cy))
